@@ -15,23 +15,21 @@ import 'package:markdown_widget_builder/markdown_widget_builder.dart'
 import 'package:markdown_widget_builder/src/constants/pkg.dart'
     show defaultConfigFile, mdPath, mediaPath;
 
-/// Structure of config.json.
+/// Structure of md_config.json.
 
 class PathType {
   final String path;
-  final String type;
 
-  PathType({required this.path, required this.type});
+  PathType({required this.path});
 
   factory PathType.fromJson(Map<String, dynamic> json) {
     return PathType(
       path: json['path'] as String,
-      type: json['type'] as String,
     );
   }
 }
 
-/// Parse the data from config.json.
+/// Parse the data from md_config.json.
 
 class Config {
   final PathType markdown;
@@ -44,35 +42,29 @@ class Config {
 
     final rawMarkdown = json['markdown'] as Map<String, dynamic>?;
     String markdownPath = '';
-    String markdownType = 'local';
 
     if (rawMarkdown == null) {
       // If "markdown" is missing, use the default.
 
       markdownPath = mdPath;
-      markdownType = 'local';
     } else {
       markdownPath = (rawMarkdown['path'] as String?)?.trim() ?? '';
-      markdownType = (rawMarkdown['type'] as String?)?.trim() ?? 'local';
     }
 
     // Read the media configuration.
 
     final rawMedia = json['media'] as Map<String, dynamic>?;
     String mediaPathLocal = '';
-    String mediaType = 'local';
 
     if (rawMedia == null) {
       mediaPathLocal = mediaPath;
-      mediaType = 'local';
     } else {
       mediaPathLocal = (rawMedia['path'] as String?)?.trim() ?? '';
-      mediaType = (rawMedia['type'] as String?)?.trim() ?? 'local';
     }
 
     return Config(
-      markdown: PathType(path: markdownPath, type: markdownType),
-      media: PathType(path: mediaPathLocal, type: mediaType),
+      markdown: PathType(path: markdownPath),
+      media: PathType(path: mediaPathLocal),
     );
   }
 }
@@ -132,8 +124,8 @@ Future<Config> loadConfigFromAssets({
     // Construct a Config with default paths when an error occurs.
 
     return Config(
-      markdown: PathType(path: mdPath, type: 'local'),
-      media: PathType(path: mediaPath, type: 'local'),
+      markdown: PathType(path: mdPath),
+      media: PathType(path: mediaPath),
     );
   }
 }

@@ -41,11 +41,11 @@ const String siiUrl = 'https://sii.anu.edu.au';
 const String defaultFileName = 'survey.json';
 const String defaultButtonText = 'Save';
 
-const String defaultConfigFile = 'assets/config.json';
+const String defaultConfigFile = 'assets/markdown/md_config.json';
 
 String _assetsPath = 'assets';
-String _mediaPath = 'assets/surveys/media';
-String _mdPath = 'assets/surveys/surveys.md';
+String _mediaPath = 'assets/markdown/media';
+String _mdPath = 'assets/markdown/surveys.md';
 
 String get assetsPath => _assetsPath;
 String get mediaPath => _mediaPath;
