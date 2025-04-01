@@ -113,6 +113,7 @@ Future<String> interpretPath(String rawPath) async {
 Future<Config> loadConfigFromAssets({
   String configAssetPath = defaultConfigFile,
   Function(String)? onError,
+  Map<String, dynamic>? configMapFromApi,
 }) async {
   try {
     final jsonStr = await rootBundle.loadString(configAssetPath);
@@ -120,6 +121,10 @@ Future<Config> loadConfigFromAssets({
     return Config.fromJson(jsonMap);
   } catch (e) {
     onError?.call('Error loading $configAssetPath: $e');
+
+    if (configMapFromApi != null && configMapFromApi.isNotEmpty) {
+      return Config.fromJson(configMapFromApi);
+    }
 
     // Construct a Config with default paths when an error occurs.
 
