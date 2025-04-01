@@ -120,11 +120,11 @@ Future<Config> loadConfigFromAssets({
     final jsonMap = json.decode(jsonStr) as Map<String, dynamic>;
     return Config.fromJson(jsonMap);
   } catch (e) {
-    onError?.call('Error loading $configAssetPath: $e');
-
     if (configMapFromApi != null && configMapFromApi.isNotEmpty) {
       return Config.fromJson(configMapFromApi);
     }
+
+    // onError?.call('Error loading $configAssetPath: $e');
 
     // Construct a Config with default paths when an error occurs.
 
