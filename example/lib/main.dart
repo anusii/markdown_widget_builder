@@ -76,10 +76,16 @@ class _MarkdownExamplePageState extends State<MarkdownExamplePage> {
 
   Future<void> _initApp() async {
     try {
+      final fallbackMap = {
+        "markdown": {"path": ""},
+        "media": {"path": ""}
+      };
+
       // Load the config from assets.
 
       final config = await loadConfigFromAssets(
         onError: (msg) => _showErrorDialog(msg),
+        configMapFromApi: fallbackMap,
       );
 
       // Set the media path (if present) or fallback to assets.
