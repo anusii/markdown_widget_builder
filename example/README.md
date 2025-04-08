@@ -92,3 +92,23 @@ loaded.
 
 If the default markdown file is also missing, the app will display an error
 message on the page.
+
+## Use interface to pass parameters to the package
+
+The package provides a simple interface to pass parameters to the package. If
+the `md_config.json` file is not specified, the package will use the interface
+to pass the parameters. The interface is as follows:
+
+```dart
+  final fallbackMap = {
+    "markdown": {"path": ""},
+    "media": {"path": ""}
+  };
+```
+
+The `fallbackMap` is a map that contains the default values for the markdown and
+media files. The `path` field is the path to the markdown file and media
+files. The `path` field supports both relative and absolute paths. If the path
+is relative, the path is relative to the same level directory of app file,
+which may be the debug folder or the release folder. The markdown file and
+media file should be copied into the folder before running the app.
