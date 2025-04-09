@@ -1,3 +1,7 @@
+## 0.0.5
+
++ Use interfaces to pass parameters to the package by default.
+
 ## 0.0.4
 
 + Set Flutter's assets folder as the default directory of markdown file and

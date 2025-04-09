@@ -33,7 +33,7 @@ library;
 import 'package:flutter/material.dart';
 
 const String applicationName = 'Markdown Widgets Builder';
-const String applicationVersion = '0.0.4';
+const String applicationVersion = '0.0.5';
 const String applicationRepo =
     'https://github.com/anusii/markdown_widget_builder';
 const String siiUrl = 'https://sii.anu.edu.au';
