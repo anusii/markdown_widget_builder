@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 
@@ -39,8 +40,7 @@ class TextAlignmentWidget extends StatelessWidget {
   final String content;
 
   const TextAlignmentWidget(
-      {Key? key, required this.align, required this.content})
-      : super(key: key);
+      {super.key, required this.align, required this.content});
 
   @override
   Widget build(BuildContext context) {

@@ -26,9 +26,11 @@ dependencies:
   path_provider: ^2.1.5
 
 dev_dependencies:
+  custom_lint: ^0.7.3
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+  import_order_lint: ^0.1.0
 
 #   dart_code_metrics:
 #     git:

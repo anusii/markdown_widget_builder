@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 
@@ -39,7 +40,7 @@ import 'package:markdown_widget_builder/src/constants/pkg.dart'
 class MarkdownText extends StatelessWidget {
   final String data;
 
-  const MarkdownText({Key? key, required this.data}) : super(key: key);
+  const MarkdownText({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {

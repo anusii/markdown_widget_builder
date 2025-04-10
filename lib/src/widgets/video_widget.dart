@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 
@@ -39,7 +40,7 @@ import 'package:markdown_widget_builder/src/constants/pkg.dart'
 class VideoWidget extends StatefulWidget {
   final String filename;
 
-  const VideoWidget({Key? key, required this.filename}) : super(key: key);
+  const VideoWidget({super.key, required this.filename});
 
   @override
   _VideoWidgetState createState() => _VideoWidgetState();

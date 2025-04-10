@@ -31,6 +31,9 @@ flutter:
 
   docs	    Run `dart doc` to create documentation.
 
+  import_order      Run import order checking.
+  import_order_fix  Run import order fixing.
+
   fix             Run `dart fix --apply`.
   format          Run `dart format`.
   dcm             Run dart code metrics 
@@ -123,7 +126,7 @@ linux_config:
 	flutter config --enable-linux-desktop
 
 .PHONY: prep
-prep: analyze fix format dcm ignore license todo
+prep: analyze fix import_order_fix format dcm ignore license todo
 	@echo "ADVISORY: make tests docs"
 	@echo $(SEPARATOR)
 
@@ -198,7 +201,7 @@ todo:
 .PHONY: license
 license:
 	@echo "Files without a LICENSE:\n"
-	@-find lib -type f -not -name '*~' ! -exec grep -qE '^(/// .*|/// Copyright|/// Licensed)' {} \; -print | xargs printf "\t%s\n"
+	@-find lib -type f -not -name '*~' ! -exec grep -qE '^(/// .*|/// Copyright|/// Licensed)' {} \; -printf "\t%p\n"
 	@echo $(SEPARATOR)
 
 .PHONY: riverpod
@@ -326,32 +329,14 @@ endif
 publish:
 	dart pub publish
 
-### TODO THESE SHOULD BE CHECKED AND CLEANED UP
+.PHONY: import_order
+import_order:
+	@echo "Dart: CHECK IMPORT ORDER"
+	-dart run custom_lint
+	@echo $(SEPARATOR)
 
-
-.PHONY: docs
-docs::
-	rsync -avzh doc/api/ root@solidcommunity.au:/var/www/html/docs/$(APP)/
-
-.PHONY: versions
-versions:
-	perl -pi -e 's|applicationVersion = ".*";|applicationVersion = "$(VER)";|' \
-	lib/constants/app.dart
-
-.PHONY: wc
-wc: lib/*.dart
-	@cat lib/*.dart lib/*/*.dart lib/*/*/*.dart \
-	| egrep -v '^/' \
-	| egrep -v '^ *$$' \
-	| wc -l
-
-#
-# Manage the production install on the remote server.
-#
-
-.PHONY: solidcommunity
-solidcommunity:
-	rsync -avzh ./ solidcommunity.au:projects/$(APP)/ \
-	--exclude .dart_tool --exclude build --exclude ios --exclude macos \
-	--exclude linux --exclude windows --exclude android
-	ssh solidcommunity.au '(cd projects/$(APP); flutter upgrade; make prod)'
+.PHONY: import_order_fix
+import_order_fix:
+	@echo "Dart: FIX IMPORT ORDER"
+	-dart run import_order_lint:fix_imports --project-name=markdown_widget_builder -r lib
+	@echo $(SEPARATOR)

@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'dart:io';
 
@@ -41,11 +42,11 @@ class ImageWidget extends StatelessWidget {
   final double? height;
 
   const ImageWidget({
-    Key? key,
+    super.key,
     required this.filename,
     this.width,
     this.height,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

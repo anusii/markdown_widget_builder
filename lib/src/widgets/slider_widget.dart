@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 
@@ -42,14 +43,14 @@ class SliderWidget extends StatelessWidget {
   final ValueChanged<double> onChanged;
 
   const SliderWidget({
-    Key? key,
+    super.key,
     required this.name,
     required this.value,
     required this.min,
     required this.max,
     required this.step,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

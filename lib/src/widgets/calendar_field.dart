@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 
@@ -39,11 +40,11 @@ class CalendarField extends StatefulWidget {
   final ValueChanged<DateTime?> onDateSelected;
 
   const CalendarField({
-    Key? key,
+    super.key,
     required this.name,
     this.initialDate,
     required this.onDateSelected,
-  }) : super(key: key);
+  });
 
   @override
   _CalendarFieldState createState() => _CalendarFieldState();

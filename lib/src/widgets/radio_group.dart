@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 
@@ -41,13 +42,13 @@ class RadioGroup extends StatelessWidget {
   final Function(String? value, String? hiddenContentId) onChanged;
 
   const RadioGroup({
-    Key? key,
+    super.key,
     required this.name,
     required this.options,
     this.selectedValue,
     required this.onChanged,
     this.isRequired = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

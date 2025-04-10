@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 
@@ -59,7 +60,7 @@ List<TextSpan> justifyText(String text, TextStyle style, double maxWidth) {
     }
 
     if (units.length <= 1) {
-      justifiedSpans.add(TextSpan(text: '$trimmedLine', style: blackTextStyle));
+      justifiedSpans.add(TextSpan(text: trimmedLine, style: blackTextStyle));
       continue;
     }
 
@@ -82,7 +83,7 @@ List<TextSpan> justifyText(String text, TextStyle style, double maxWidth) {
     if (extraSpace <= 0) {
       // If there's no extra space, no need to adjust.
 
-      justifiedSpans.add(TextSpan(text: '$trimmedLine', style: blackTextStyle));
+      justifiedSpans.add(TextSpan(text: trimmedLine, style: blackTextStyle));
       continue;
     }
 
