@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 

@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 
@@ -40,11 +41,11 @@ class TextHeadingWidget extends StatelessWidget {
   final String align;
 
   const TextHeadingWidget({
-    Key? key,
+    super.key,
     required this.level,
     required this.content,
     required this.align,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

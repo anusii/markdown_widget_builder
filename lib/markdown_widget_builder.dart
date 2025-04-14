@@ -28,7 +28,7 @@
 ///
 /// Authors: Tony Chen
 
-library markdown_widget_builder;
+library;
 
 export 'src/widgets/markdown_widget_builder.dart'
     show MarkdownWidgetBuilder, setMarkdownMediaPath;

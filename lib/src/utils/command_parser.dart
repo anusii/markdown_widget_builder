@@ -31,6 +31,7 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import 'package:markdown_widget_builder/src/utils/helpers.dart';
 import 'package:markdown_widget_builder/src/widgets/button_widget.dart';
 import 'package:markdown_widget_builder/src/widgets/markdown_text.dart';

@@ -1,4 +1,4 @@
-library file_ops;
+library;
 
 import 'dart:async';
 import 'dart:convert';

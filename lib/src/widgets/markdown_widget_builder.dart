@@ -27,15 +27,16 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:media_kit/media_kit.dart';
 
+import 'package:markdown_widget_builder/src/constants/pkg.dart' as pkg;
 import 'package:markdown_widget_builder/src/utils/command_parser.dart';
 import 'package:markdown_widget_builder/src/widgets/input_field.dart';
-import 'package:markdown_widget_builder/src/constants/pkg.dart' as pkg;
 
 /// Sets the media path inside the package.
 
@@ -70,12 +71,12 @@ class MarkdownWidgetBuilder extends StatefulWidget {
   final void Function(String title, String content)? onMenuItemSelected;
 
   const MarkdownWidgetBuilder({
-    Key? key,
+    super.key,
     required this.content,
     required this.title,
     this.submitUrl,
     this.onMenuItemSelected,
-  }) : super(key: key);
+  });
 
   @override
   _MarkdownWidgetBuilderState createState() => _MarkdownWidgetBuilderState();

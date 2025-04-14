@@ -27,6 +27,7 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+library;
 
 import 'package:flutter/material.dart';
 
@@ -40,12 +41,12 @@ class PageBreakWidget extends StatelessWidget {
   final VoidCallback onPrev;
 
   const PageBreakWidget({
-    Key? key,
+    super.key,
     required this.currentPage,
     required this.totalPages,
     required this.onNext,
     required this.onPrev,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
