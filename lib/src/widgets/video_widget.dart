@@ -55,6 +55,7 @@ class _VideoWidgetState extends State<VideoWidget> {
   late final Player _player;
   late final VideoController _controller;
   bool _isVideoInitialized = false;
+  bool _failedToLoad = false;
 
   @override
   void initState() {
@@ -74,47 +75,55 @@ class _VideoWidgetState extends State<VideoWidget> {
     final isLocalFile = await localFile.exists();
 
     String mediaUri;
-    if (isLocalFile) {
-      if (rawLocalPath.startsWith('file://')) {
-        mediaUri = rawLocalPath;
+    try {
+      if (isLocalFile) {
+        if (rawLocalPath.startsWith('file://')) {
+          mediaUri = rawLocalPath;
+        } else {
+          mediaUri = 'file://$rawLocalPath';
+        }
       } else {
-        mediaUri = 'file://$rawLocalPath';
+        final ByteData data = await rootBundle.load(rawLocalPath);
+        final Uint8List bytes = data.buffer.asUint8List();
+
+        final tempDirPath = (await getTemporaryDirectory()).path;
+        final fileNameOnly = widget.filename.split('/').last;
+        final tempPath = '$tempDirPath/$fileNameOnly';
+
+        final tempFile = File(tempPath);
+        await tempFile.writeAsBytes(bytes);
+
+        mediaUri = Uri.file(tempFile.path).toString();
       }
-    } else {
-      final data = await rootBundle.load(rawLocalPath);
-      final bytes = data.buffer.asUint8List();
-
-      final tempDirPath = (await getTemporaryDirectory()).path;
-      final fileNameOnly = widget.filename.split('/').last;
-      final tempPath = '$tempDirPath/$fileNameOnly';
-
-      final tempFile = File(tempPath);
-      await tempFile.writeAsBytes(bytes);
-
-      mediaUri = Uri.file(tempFile.path).toString();
+    } catch (e) {
+      _failedToLoad = true;
+      setState(() {});
+      return;
     }
 
     _player = Player();
     _controller = VideoController(_player);
 
-    // Open the video.
-
-    await _player.open(Media(mediaUri), play: false);
-
-    // Set video initialised.
-
-    setState(() {
-      _isVideoInitialized = true;
-    });
+    try {
+      await _player.open(Media(mediaUri), play: false);
+      setState(() {
+        _isVideoInitialized = true;
+      });
+    } catch (_) {
+      _failedToLoad = true;
+      setState(() {});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isVideoInitialized) {
-      return _buildVideoPlayer();
-    } else {
-      return Center(child: CircularProgressIndicator());
+    if (_failedToLoad) {
+      return const Center(child: Text('Video not found'));
     }
+    if (!_isVideoInitialized) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    return _buildVideoPlayer();
   }
 
   Widget _buildVideoPlayer() {
@@ -122,8 +131,6 @@ class _VideoWidgetState extends State<VideoWidget> {
       child: FractionallySizedBox(
         widthFactor: contentWidthFactor,
         child: AspectRatio(
-          // Default aspect ratio.
-
           aspectRatio: 16 / 9,
           child: Focus(
             canRequestFocus: false,
