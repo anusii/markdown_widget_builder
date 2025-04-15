@@ -29,10 +29,15 @@
 /// Authors: Tony Chen
 library;
 
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:markdown_widget_builder/src/constants/pkg.dart'
     show contentWidthFactor, mediaPath;
@@ -64,25 +69,37 @@ class _VideoWidgetState extends State<VideoWidget> {
   }
 
   Future<void> _initializeVideo() async {
-    // Build the raw local path by concatenating mediaPath + filename.
+    final rawLocalPath = '$mediaPath/${widget.filename}';
+    final localFile = File(rawLocalPath);
+    final isLocalFile = await localFile.exists();
 
-    final String rawLocalPath = '$mediaPath/${widget.filename}';
+    String mediaUri;
+    if (isLocalFile) {
+      if (rawLocalPath.startsWith('file://')) {
+        mediaUri = rawLocalPath;
+      } else {
+        mediaUri = 'file://$rawLocalPath';
+      }
+    } else {
+      final data = await rootBundle.load(rawLocalPath);
+      final bytes = data.buffer.asUint8List();
 
-    // Convert to a 'file://' URI so media_kit treats it as a local file,
-    // not a Flutter asset.
+      final tempDirPath = (await getTemporaryDirectory()).path;
+      final fileNameOnly = widget.filename.split('/').last;
+      final tempPath = '$tempDirPath/$fileNameOnly';
 
-    final String fileUri = rawLocalPath.startsWith('file://')
-        ? rawLocalPath
-        : 'file://$rawLocalPath';
+      final tempFile = File(tempPath);
+      await tempFile.writeAsBytes(bytes);
 
-    // Initialise the player.
+      mediaUri = Uri.file(tempFile.path).toString();
+    }
 
     _player = Player();
     _controller = VideoController(_player);
 
     // Open the video.
 
-    await _player.open(Media(fileUri), play: false);
+    await _player.open(Media(mediaUri), play: false);
 
     // Set video initialised.
 
