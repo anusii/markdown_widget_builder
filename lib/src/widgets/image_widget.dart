@@ -67,9 +67,12 @@ class ImageWidgetState extends State<ImageWidget> {
   Future<void> _initializeImage() async {
     final rawLocalPath = '$mediaPath/${widget.filename}';
     final file = File(rawLocalPath);
-    final existsLocally = await file.exists();
+    final isFileExists = await file.exists();
 
-    if (existsLocally) {
+    final isAssetLike = rawLocalPath.startsWith('assets/') ||
+        rawLocalPath.startsWith('assets\\');
+
+    if (isFileExists && !isAssetLike) {
       _localPath = file.path;
     } else {
       try {

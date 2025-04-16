@@ -72,16 +72,17 @@ class _VideoWidgetState extends State<VideoWidget> {
   Future<void> _initializeVideo() async {
     final rawLocalPath = '$mediaPath/${widget.filename}';
     final localFile = File(rawLocalPath);
-    final isLocalFile = await localFile.exists();
+    final isFileExists = await localFile.exists();
+
+    final isAssetLike = rawLocalPath.startsWith('assets/') ||
+        rawLocalPath.startsWith('assets\\');
 
     String mediaUri;
     try {
-      if (isLocalFile) {
-        if (rawLocalPath.startsWith('file://')) {
-          mediaUri = rawLocalPath;
-        } else {
-          mediaUri = 'file://$rawLocalPath';
-        }
+      if (isFileExists && !isAssetLike) {
+        mediaUri = rawLocalPath.startsWith('file://')
+            ? Uri.parse(rawLocalPath).toFilePath()
+            : rawLocalPath;
       } else {
         final ByteData data = await rootBundle.load(rawLocalPath);
         final Uint8List bytes = data.buffer.asUint8List();

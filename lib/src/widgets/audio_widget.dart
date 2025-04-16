@@ -88,10 +88,13 @@ class _AudioWidgetState extends State<AudioWidget> {
   Future<void> _initAudioPlayer() async {
     final rawLocalPath = '$mediaPath/${widget.filename}';
     final localFile = File(rawLocalPath);
-    final existsLocally = await localFile.exists();
+    final isFileExists = await localFile.exists();
+
+    final isAssetLike = rawLocalPath.startsWith('assets/') ||
+        rawLocalPath.startsWith('assets\\');
 
     String sourcePath;
-    if (existsLocally) {
+    if (isFileExists && !isAssetLike) {
       sourcePath = rawLocalPath.startsWith('file://')
           ? Uri.parse(rawLocalPath).toFilePath()
           : rawLocalPath;
