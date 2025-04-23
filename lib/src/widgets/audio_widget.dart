@@ -30,8 +30,12 @@
 library;
 
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
 
 import 'package:audioplayers/audioplayers.dart';
 
@@ -49,11 +53,14 @@ class AudioWidget extends StatefulWidget {
 
 class _AudioWidgetState extends State<AudioWidget> {
   late AudioPlayer _player;
+  String? _sourcePath;
+
   Duration? _duration;
   Duration _position = Duration.zero;
   PlayerState? _playerState;
 
-  // Declare the StreamSubscription variables.
+  bool _failedToLoad = false;
+  bool _initialized = false;
 
   late StreamSubscription<Duration> _durationSubscription;
   late StreamSubscription<Duration> _positionSubscription;
@@ -63,125 +70,141 @@ class _AudioWidgetState extends State<AudioWidget> {
   void initState() {
     super.initState();
     _player = AudioPlayer();
-
     _initAudioPlayer();
   }
 
-  void _initAudioPlayer() async {
-    // Build the path.
+  @override
+  void dispose() {
+    _durationSubscription.cancel();
+    _positionSubscription.cancel();
+    _playerStateSubscription.cancel();
+    _player.dispose();
+    super.dispose();
+  }
 
-    final String fullPath = '$mediaPath/${widget.filename}';
+  /// Loads the audio file either from a local path or from assets,
+  /// then initialises the player.
 
-    // Check if it's an asset path.
+  Future<void> _initAudioPlayer() async {
+    final rawLocalPath = '$mediaPath/${widget.filename}';
+    final localFile = File(rawLocalPath);
+    final isFileExists = await localFile.exists();
 
-    if (mediaPath.startsWith('assets/')) {
-      final relativeAsset = fullPath.replaceFirst('assets/', '');
-      await _player.setSource(AssetSource(relativeAsset));
+    final isAssetLike = rawLocalPath.startsWith('assets/') ||
+        rawLocalPath.startsWith('assets\\');
+
+    String sourcePath;
+    if (isFileExists && !isAssetLike) {
+      sourcePath = rawLocalPath.startsWith('file://')
+          ? Uri.parse(rawLocalPath).toFilePath()
+          : rawLocalPath;
     } else {
-      // local file approach.
+      try {
+        final ByteData data = await rootBundle.load(rawLocalPath);
+        final Uint8List bytes = data.buffer.asUint8List();
 
-      String localPath = fullPath;
-      if (fullPath.startsWith('file://')) {
-        localPath = Uri.parse(fullPath).toFilePath();
+        final tempDir = await getTemporaryDirectory();
+        final fileNameOnly = widget.filename.split('/').last;
+        final tempPath = '${tempDir.path}/$fileNameOnly';
+
+        final tempFile = File(tempPath);
+        await tempFile.writeAsBytes(bytes);
+
+        sourcePath = tempFile.path;
+      } catch (e) {
+        _failedToLoad = true;
+        setState(() {});
+        return;
       }
-      await _player.setSource(DeviceFileSource(localPath));
     }
 
-    // Listen for audio duration.
+    _sourcePath = sourcePath;
+
+    try {
+      await _player.setSource(DeviceFileSource(_sourcePath!));
+    } catch (e) {
+      _failedToLoad = true;
+      setState(() {});
+      return;
+    }
 
     _durationSubscription = _player.onDurationChanged.listen((d) {
       if (mounted) setState(() => _duration = d);
     });
 
-    // Listen for audio position.
-
     _positionSubscription = _player.onPositionChanged.listen((p) {
       if (mounted) setState(() => _position = p);
     });
 
-    // Listen for player state.
-
     _playerStateSubscription = _player.onPlayerStateChanged.listen((s) {
       if (mounted) setState(() => _playerState = s);
+    });
+
+    setState(() {
+      _initialized = true;
     });
   }
 
   @override
-  void dispose() {
-    // Cancel the subscriptions.
-
-    _durationSubscription.cancel();
-    _positionSubscription.cancel();
-    _playerStateSubscription.cancel();
-
-    // Dispose the audio player.
-
-    _player.dispose();
-
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    if (_failedToLoad) {
+      return const Center(child: Text('Audio not found'));
+    }
+    if (!_initialized) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     final isPlaying = _playerState == PlayerState.playing;
-    final int durationMs = _duration?.inMilliseconds ?? 0;
-    final int positionMs = _position.inMilliseconds;
+    final isPaused = _playerState == PlayerState.paused;
+    final isStopped = _playerState == PlayerState.stopped;
+    final isCompleted = _playerState == PlayerState.completed;
+
+    final totalMs = _duration?.inMilliseconds ?? 0;
+    final currentMs = _position.inMilliseconds.clamp(0, totalMs);
 
     return Center(
       child: FractionallySizedBox(
         widthFactor: contentWidthFactor,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Progress bar.
-
             Slider(
-              // Prevent errors when positionMs > durationMs by clamping.
-
-              value: positionMs.clamp(0, durationMs).toDouble(),
+              value: currentMs.toDouble(),
               min: 0.0,
-              max: durationMs > 0 ? durationMs.toDouble() : 1.0,
+              max: totalMs > 0 ? totalMs.toDouble() : 1.0,
               onChanged: (double value) {
-                // If durationMs is not loaded yet (=0), prevent dragging.
-
-                if (durationMs > 0) {
+                if (totalMs > 0) {
                   final newPosition = Duration(milliseconds: value.toInt());
                   _player.seek(newPosition);
                 }
               },
             ),
-
-            // Button row.
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Play/pause button.
-
                 IconButton(
-                  icon: Icon(
-                    isPlaying ? Icons.pause : Icons.play_arrow,
-                  ),
+                  icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
                   onPressed: () async {
                     if (isPlaying) {
                       await _player.pause();
                     } else {
-                      if (_playerState == PlayerState.paused ||
-                          _playerState == PlayerState.stopped ||
-                          _playerState == PlayerState.completed) {
+                      if (isPaused) {
                         await _player.resume();
                       } else {
-                        await _player.resume();
+                        // If stopped, completed, or never started,
+                        // play from the start.
+
+                        if (_sourcePath != null) {
+                          await _player.play(DeviceFileSource(_sourcePath!));
+                        }
                       }
                     }
                   },
                 ),
-
-                // Stop button.
-
                 IconButton(
                   icon: const Icon(Icons.stop),
-                  onPressed: () {
-                    _player.stop();
+                  onPressed: () async {
+                    await _player.stop();
                     setState(() {
                       _position = Duration.zero;
                     });

@@ -8,6 +8,22 @@
     <true/>
     <key>com.apple.security.assets.files.read-write</key>
     <true/>
+    <key>com.apple.security.files.downloads.read-write</key>
+    <true/>
+    <key>com.apple.security.files.documents.read-write</key>
+    <true/>
+    <key>com.apple.security.files.pictures.read-write</key>
+    <true/>
+    <key>com.apple.security.files.movies.read-write</key>
+    <true/>
+    <key>com.apple.security.files.music.read-write</key>
+    <true/>
+    <key>com.apple.security.files.shared-read-write</key>
+    <true/>
+    <key>com.apple.security.files.absolute-path.read-only</key>
+    <array>
+      <string>/Users</string>
+    </array>
     <key>com.apple.security.network.client</key>
     <true/>
 </dict>

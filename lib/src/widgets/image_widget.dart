@@ -32,11 +32,13 @@ library;
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
 
 import 'package:markdown_widget_builder/src/constants/pkg.dart'
     show contentWidthFactor, mediaPath;
 
-class ImageWidget extends StatelessWidget {
+class ImageWidget extends StatefulWidget {
   final String filename;
   final double? width;
   final double? height;
@@ -49,27 +51,63 @@ class ImageWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    // Build the local raw path by concatenating mediaPath + filename.
+  ImageWidgetState createState() => ImageWidgetState();
+}
 
-    final String rawLocalPath = '$mediaPath/$filename';
+class ImageWidgetState extends State<ImageWidget> {
+  String? _localPath;
+  bool _failedToLoad = false;
 
-    // Convert it to an OS path (without file://).
+  @override
+  void initState() {
+    super.initState();
+    _initializeImage();
+  }
 
-    String localPath;
-    if (rawLocalPath.startsWith('file://')) {
-      localPath = Uri.parse(rawLocalPath).toFilePath();
+  Future<void> _initializeImage() async {
+    final rawLocalPath = '$mediaPath/${widget.filename}';
+    final file = File(rawLocalPath);
+    final isFileExists = await file.exists();
+
+    final isAssetLike = rawLocalPath.startsWith('assets/') ||
+        rawLocalPath.startsWith('assets\\');
+
+    if (isFileExists && !isAssetLike) {
+      _localPath = file.path;
     } else {
-      localPath = rawLocalPath;
+      try {
+        final data = await rootBundle.load(rawLocalPath);
+        final bytes = data.buffer.asUint8List();
+        final tempDir = await getTemporaryDirectory();
+        final fileNameOnly = widget.filename.split('/').last;
+        final tempPath = '${tempDir.path}/$fileNameOnly';
+
+        final tempFile = File(tempPath);
+        await tempFile.writeAsBytes(bytes);
+        _localPath = tempFile.path;
+      } catch (e) {
+        _failedToLoad = true;
+      }
     }
 
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_failedToLoad) {
+      return const Center(child: Text('Image not found'));
+    }
+    if (_localPath == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
     return Center(
       child: FractionallySizedBox(
         widthFactor: contentWidthFactor,
         child: Image.file(
-          File(localPath),
-          width: width,
-          height: height,
+          File(_localPath!),
+          width: widget.width,
+          height: widget.height,
           fit: BoxFit.contain,
           errorBuilder: (context, error, stackTrace) {
             return const Text('Image not found');
