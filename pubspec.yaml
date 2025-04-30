@@ -1,5 +1,5 @@
 name: markdown_widget_builder
-description: "Widget builder for surveys defined using markdown-like syntax."
+description: "Widget builder from markdown."
 version: 0.0.5
 homepage: https://github.com/anusii/markdown_widget_builder
 
@@ -31,15 +31,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   import_order_lint: ^0.1.0
-
-#   dart_code_metrics:
-#     git:
-#       url: https://github.com/anusii/dart-code-metrics.git
-#       ref: dev
-
-# dependency_overrides:
-#   # To have dart-code-metrics working
-#   collection: ^1.19.0
 
 flutter:
   uses-material-design: true
