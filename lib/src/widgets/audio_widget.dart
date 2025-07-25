@@ -48,7 +48,7 @@ class AudioWidget extends StatefulWidget {
   const AudioWidget({super.key, required this.filename});
 
   @override
-  _AudioWidgetState createState() => _AudioWidgetState();
+  State<AudioWidget> createState() => _AudioWidgetState();
 }
 
 class _AudioWidgetState extends State<AudioWidget> {
@@ -156,8 +156,6 @@ class _AudioWidgetState extends State<AudioWidget> {
 
     final isPlaying = _playerState == PlayerState.playing;
     final isPaused = _playerState == PlayerState.paused;
-    final isStopped = _playerState == PlayerState.stopped;
-    final isCompleted = _playerState == PlayerState.completed;
 
     final totalMs = _duration?.inMilliseconds ?? 0;
     final currentMs = _position.inMilliseconds.clamp(0, totalMs);
