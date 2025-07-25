@@ -35,9 +35,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:path_provider/path_provider.dart';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:markdown_widget_builder/src/constants/pkg.dart'
     show contentWidthFactor, mediaPath;
