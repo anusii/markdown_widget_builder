@@ -52,7 +52,7 @@ class CheckboxGroup extends StatefulWidget {
   });
 
   @override
-  _CheckboxGroupState createState() => _CheckboxGroupState();
+  State<CheckboxGroup> createState() => _CheckboxGroupState();
 }
 
 class _CheckboxGroupState extends State<CheckboxGroup> {

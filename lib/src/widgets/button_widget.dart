@@ -57,7 +57,7 @@ class ButtonWidget extends StatefulWidget {
   });
 
   @override
-  _ButtonWidgetState createState() => _ButtonWidgetState();
+  State<ButtonWidget> createState() => _ButtonWidgetState();
 }
 
 class _ButtonWidgetState extends State<ButtonWidget> {
@@ -332,6 +332,7 @@ class _ButtonWidgetState extends State<ButtonWidget> {
   Future<void> _downloadDataForWeb(
       Map<String, dynamic> data, String defaultFileName) async {
     final jsonContent = encoder.convert(data);
+    final messenger = ScaffoldMessenger.of(context);
 
     // Show a dialogue to input the filename.
 
@@ -381,11 +382,11 @@ class _ButtonWidgetState extends State<ButtonWidget> {
 
       html.Url.revokeObjectUrl(url);
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(content: Text('Data downloaded as $filename')),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(content: Text('Save cancelled.')),
       );
     }
@@ -393,6 +394,8 @@ class _ButtonWidgetState extends State<ButtonWidget> {
 
   Future<void> _saveDataForNonWeb(
       Map<String, dynamic> data, String defaultFileName) async {
+    final messenger = ScaffoldMessenger.of(context);
+    
     String? selectedFile = await FilePicker.platform.saveFile(
       dialogTitle: 'Please choose a filename and path to save the result',
       fileName: defaultFileName,
@@ -408,19 +411,19 @@ class _ButtonWidgetState extends State<ButtonWidget> {
         await file.writeAsString(jsonContent);
         debugPrint('File saved at $selectedFile');
 
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           SnackBar(content: Text('Data saved as $selectedFile')),
         );
       } catch (e) {
         debugPrint('Error saving file: $e');
 
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           SnackBar(content: Text('Error saving file: $e')),
         );
       }
     } else {
       debugPrint('Save file dialog was cancelled.');
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         const SnackBar(content: Text('Save cancelled.')),
       );
     }
@@ -428,6 +431,7 @@ class _ButtonWidgetState extends State<ButtonWidget> {
 
   Future<void> _submitDataToUrl(Map<String, dynamic> data) async {
     String url = actionParameter;
+    final messenger = ScaffoldMessenger.of(context);
 
     try {
       final response = await http.post(
@@ -437,12 +441,12 @@ class _ButtonWidgetState extends State<ButtonWidget> {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           const SnackBar(content: Text('Submission successful')),
         );
       } else {
         debugPrint('Response body: ${response.body}');
-        ScaffoldMessenger.of(context).showSnackBar(
+        messenger.showSnackBar(
           SnackBar(
             content: Text('Submission failed: ${response.statusCode} '
                 '${response.reasonPhrase}'),
@@ -452,7 +456,7 @@ class _ButtonWidgetState extends State<ButtonWidget> {
     } catch (e, stackTrace) {
       debugPrint('Submission failed: $e');
       debugPrint('Stack trace: $stackTrace');
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(
             content: Text('Submission failed: $e. '
                 'Did you set up the online submission correctly?')),

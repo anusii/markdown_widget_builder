@@ -79,7 +79,7 @@ class MarkdownWidgetBuilder extends StatefulWidget {
   });
 
   @override
-  _MarkdownWidgetBuilderState createState() => _MarkdownWidgetBuilderState();
+  State<MarkdownWidgetBuilder> createState() => _MarkdownWidgetBuilderState();
 }
 
 class _MarkdownWidgetBuilderState extends State<MarkdownWidgetBuilder> {

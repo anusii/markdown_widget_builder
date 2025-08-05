@@ -63,9 +63,11 @@ class DescriptionBox extends StatelessWidget {
               if (await canLaunchUrl(uri)) {
                 await launchUrl(uri);
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Cannot launch $href')),
-                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Cannot launch $href')),
+                  );
+                }
               }
             }
           },

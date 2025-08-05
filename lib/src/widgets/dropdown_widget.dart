@@ -49,7 +49,7 @@ class DropdownWidget extends StatefulWidget {
   });
 
   @override
-  _DropdownWidgetState createState() => _DropdownWidgetState();
+  State<DropdownWidget> createState() => _DropdownWidgetState();
 }
 
 class _DropdownWidgetState extends State<DropdownWidget> {

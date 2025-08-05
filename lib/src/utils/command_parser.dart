@@ -138,7 +138,7 @@ class CommandParser {
   /// Parse the markdown content and extract all widgets and commands into
   /// pages of widgets.
   ///
-  /// Returns a list of pages, where each page is a List<Widget>.
+  /// Returns a list of pages, where each page is a list of Widget.
 
   List<List<Widget>> parse() {
     List<List<Widget>> pages = [];
