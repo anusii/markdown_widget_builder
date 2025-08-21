@@ -29,7 +29,7 @@
 /// Authors: Tony Chen
 library;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide RadioGroup;
 
 import 'package:markdown_widget_builder/src/constants/pkg.dart'
     show contentWidthFactor;
