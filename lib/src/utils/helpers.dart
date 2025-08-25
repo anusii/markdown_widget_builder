@@ -209,7 +209,7 @@ class Helpers {
     List<Map<String, String?>> options, {
     bool isRequired = false,
   }) {
-    return RadioGroup(
+    return RadioGroupField(
       name: name,
       options: options,
       selectedValue: state['_radioValues'][name],

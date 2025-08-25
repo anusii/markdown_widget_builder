@@ -30,18 +30,19 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart' as fw;
 
 import 'package:markdown_widget_builder/src/constants/pkg.dart'
     show contentWidthFactor;
 
-class RadioGroup extends StatelessWidget {
+class RadioGroupField extends StatelessWidget {
   final String name;
   final List<Map<String, String?>> options;
   final String? selectedValue;
   final bool isRequired;
   final Function(String? value, String? hiddenContentId) onChanged;
 
-  const RadioGroup({
+  const RadioGroupField({
     super.key,
     required this.name,
     required this.options,
@@ -64,6 +65,14 @@ class RadioGroup extends StatelessWidget {
 
     double halfLineHeight = lineHeight / 2;
 
+    // Map each option's value to its hidden content id for quick lookup when
+    // the selection changes.
+
+    final Map<String, String?> hiddenByValue = {
+      for (final o in options)
+        if ((o['value'] ?? '').isNotEmpty) o['value']!: o['hiddenContentId'],
+    };
+
     List<Widget> children = [];
 
     if (isRequired) {
@@ -75,10 +84,18 @@ class RadioGroup extends StatelessWidget {
     }
 
     children.addAll(options.map((option) {
-      // bool isChecked = selectedValue == option['value'];
+      final String value = option['value'] ?? '';
+
       return InkWell(
         onTap: () {
-          onChanged(option['value'], option['hiddenContentId']);
+          final registry = fw.RadioGroup.maybeOf<String>(context);
+          if (registry != null) {
+            registry.onChanged(value);
+          } else {
+            // Fallback.
+
+            onChanged(value, hiddenByValue[value]);
+          }
         },
         child: Row(
           // Align the radio button and text vertically at the top.
@@ -87,10 +104,6 @@ class RadioGroup extends StatelessWidget {
           children: [
             Radio<String>(
               value: option['value']!,
-              groupValue: selectedValue,
-              onChanged: (value) {
-                onChanged(value, option['hiddenContentId']);
-              },
             ),
             Expanded(
               child: Padding(
@@ -107,21 +120,30 @@ class RadioGroup extends StatelessWidget {
       );
     }).toList());
 
-    return Center(
-      child: FractionallySizedBox(
-        widthFactor: contentWidthFactor,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Add a half line height of blank line before the first option.
+    return fw.RadioGroup<String>(
+      groupValue: selectedValue,
+      onChanged: (String? v) {
+        // Relay selection to the caller, including the associated hidden
+        // content id.
 
-            if (isRequired) SizedBox(height: halfLineHeight),
-            ...children,
+        onChanged(v, v == null ? null : hiddenByValue[v]);
+      },
+      child: Center(
+        child: FractionallySizedBox(
+          widthFactor: contentWidthFactor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Add a half line height of blank line before the first option.
 
-            // Add a half line height of blank line after the last option.
+              if (isRequired) SizedBox(height: halfLineHeight),
+              ...children,
 
-            SizedBox(height: halfLineHeight),
-          ],
+              // Add a half line height of blank line after the last option.
+
+              SizedBox(height: halfLineHeight),
+            ],
+          ),
         ),
       ),
     );
