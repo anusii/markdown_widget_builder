@@ -1,6 +1,6 @@
 /// An example of loading a markdown with 4 surveys and rendering them.
 ///
-// Time-stamp: <Tuesday 2025-08-26 11:22:29 +1000 Graham Williams>
+// Time-stamp: <Tuesday 2025-08-26 11:58:24 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024, Software Innovation Institute, ANU.
 ///
@@ -78,7 +78,7 @@ class _MarkdownExamplePageState extends State<MarkdownExamplePage> {
     try {
       final fallbackMap = {
         'markdown': {'path': ''},
-        'media': {'path': ''}
+        'media': {'path': ''},
       };
 
       // Load the config from assets.
