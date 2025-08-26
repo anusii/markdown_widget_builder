@@ -9,6 +9,7 @@ utilised by the flutter version_widget package.
 
 ## 0.1 Stable beta release
 
++ Fix new flutter RadioGroup conflict [0.0.7 20250825 tonypioneer]
 + Lint cleanup [0.0.6 20250805 tonypioneer]
 + Use interfaces to pass parameters to the package by default. [0.0.5 20250409 tonypioneer]
 + Set Flutter's assets folder as the default directory of markdown file and
