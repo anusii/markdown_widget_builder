@@ -40,7 +40,7 @@ jobs:
       - name: Clone Repository
         uses: actions/checkout@v4
 
-     - name: Check for example folder. If so (a package) no build.
+      - name: Check for example folder. If so (a package) no build.
         run: |
           if [ ! -e "lib/main.dart" ]; then
             echo "❌ No lib/main.dart so not an app - stopping workflow"
@@ -102,7 +102,7 @@ jobs:
       - name: Clone Repository
         uses: actions/checkout@v4
 
-     - name: Check for example folder. If so (a package) no build.
+      - name: Check for example folder. If so (a package) no build.
         run: |
           if [ ! -e "lib/main.dart" ]; then
             echo "❌ No lib/main.dart so not an app - stopping workflow"
@@ -166,7 +166,7 @@ jobs:
       - name: Clone Repository
         uses: actions/checkout@v4
 
-     - name: Check for example folder. If so (a package) no build.
+      - name: Check for example folder. If so (a package) no build.
         run: |
           if [ ! -e "lib/main.dart" ]; then
             echo "❌ No lib/main.dart so not an app - stopping workflow"
@@ -217,7 +217,7 @@ jobs:
       - name: Clone Repository
         uses: actions/checkout@v4
 
-     - name: Check for example folder. If so (a package) no build.
+      - name: Check for example folder. If so (a package) no build.
         run: |
           if [ ! -e "lib/main.dart" ]; then
             echo "❌ No lib/main.dart so not an app - stopping workflow"
