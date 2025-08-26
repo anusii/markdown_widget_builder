@@ -40,6 +40,15 @@ jobs:
       - name: Clone Repository
         uses: actions/checkout@v4
 
+     - name: Check for example folder. If so (a package) no build.
+        id: check-example
+        run: |
+          if [ ! -e "lib/main.dart" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "❌ No lib/main.dart so not an app - stopping workflow"
+            exit 0
+          fi
+
       - name: Confirm Branch
         run: git status
 
@@ -94,6 +103,15 @@ jobs:
     steps:
       - name: Clone Repository
         uses: actions/checkout@v4
+
+     - name: Check for example folder. If so (a package) no build.
+        id: check-example
+        run: |
+          if [ ! -e "lib/main.dart" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "❌ No lib/main.dart so not an app - stopping workflow"
+            exit 0
+          fi
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -152,6 +170,15 @@ jobs:
       - name: Clone Repository
         uses: actions/checkout@v4
 
+     - name: Check for example folder. If so (a package) no build.
+        id: check-example
+        run: |
+          if [ ! -e "lib/main.dart" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "❌ No lib/main.dart so not an app - stopping workflow"
+            exit 0
+          fi
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -195,6 +222,15 @@ jobs:
     steps:
       - name: Clone Repository
         uses: actions/checkout@v4
+
+     - name: Check for example folder. If so (a package) no build.
+        id: check-example
+        run: |
+          if [ ! -e "lib/main.dart" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "❌ No lib/main.dart so not an app - stopping workflow"
+            exit 0
+          fi
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
