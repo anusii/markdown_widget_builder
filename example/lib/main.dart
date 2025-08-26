@@ -1,6 +1,6 @@
 /// An example of loading a markdown with 4 surveys and rendering them.
 ///
-// Time-stamp: <Tuesday 2025-01-14 10:00:31 +1100 Tony Chen>
+// Time-stamp: <Tuesday 2025-08-26 11:22:29 +1000 Graham Williams>
 ///
 /// Copyright (C) 2024, Software Innovation Institute, ANU.
 ///
@@ -77,8 +77,8 @@ class _MarkdownExamplePageState extends State<MarkdownExamplePage> {
   Future<void> _initApp() async {
     try {
       final fallbackMap = {
-        "markdown": {"path": ""},
-        "media": {"path": ""}
+        'markdown': {'path': ''},
+        'media': {'path': ''}
       };
 
       // Load the config from assets.
