@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD041 -->
+
 [![Flutter](https://img.shields.io/badge/Made%20with-Flutter-blue.svg)](https://flutter.dev/)
 [![Pub Package](https://img.shields.io/pub/v/markdown_widget_builder)](https://pub.dev/packages/markdown_widget_builder)
 [![GitHub Issues](https://img.shields.io/github/issues/anusii/markdown_widget_builder)](https://github.com/anusii/markdown_widget_builder/issues)
@@ -60,15 +62,15 @@ For example, the following snippet from the markdown file:
 
 ## Button
 
-`%% Button-Begin(label,type,path)` and `%% Button-End` will be recognised as a 
-button. The parameter `label` is the text displayed on the button, `type` is 
+`%% Button-Begin(label,type,path)` and `%% Button-End` will be recognised as a
+button. The parameter `label` is the text displayed on the button, `type` is
 the type of the button (0 - Save to JSON file (default), 1 - Submit to URL),
 and `path` is the path to redirect to or save to when the button is clicked. The
 default file name is `result.json`. The button will be displayed on the
 `Survey Details` page.
 
-Between the `Button-Begin` and `Button-End` tags is a list of widget IDs 
-containing all required fields. When the button is clicked, the widget will 
+Between the `Button-Begin` and `Button-End` tags is a list of widget IDs
+containing all required fields. When the button is clicked, the widget will
 check if all required fields are filled in. If all required fields are filled
 in, the widget will save the data to the specified path or submit it to the
 specified URL. If any required fields are not filled in, the widget will display
@@ -86,8 +88,8 @@ For example, the following snippet from the markdown file:
 ## Radio Button
 
 `%% Radio(name,value,label,hidden)` will be recognised as a radio button with
-the given `name`, `value`, `label` and `hidden_content`. Users can use escape 
-characters `\(`, `\)`, and `\"` to display parentheses and quotation marks 
+the given `name`, `value`, `label` and `hidden_content`. Users can use escape
+characters `\(`, `\)`, and `\"` to display parentheses and quotation marks
 in the label. The radio button will be displayed on the `Survey Details` page.
 
 For example, the following snippet from the markdown file:
@@ -141,7 +143,7 @@ content. The specific approach is as follows:
 
 `%% InputSL(name)` will be recognised as a single-line input box with the
 given `name`, and `%% InputML(name)` will be recognised as a multi-line input
-box with the given `name`. The input box will be displayed on the `Survey 
+box with the given `name`. The input box will be displayed on the `Survey
 Details` page.
 
 For example, the following snippet from the markdown file:
