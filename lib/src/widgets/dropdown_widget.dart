@@ -82,7 +82,7 @@ class _DropdownWidgetState extends State<DropdownWidget> {
             decoration: const InputDecoration(
               border: OutlineInputBorder(),
             ),
-            value: _selectedValue,
+            initialValue: _selectedValue,
             items: widget.options.map((String value) {
               return DropdownMenuItem<String>(
                 value: value,
