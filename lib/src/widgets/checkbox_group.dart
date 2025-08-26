@@ -106,45 +106,52 @@ class _CheckboxGroupState extends State<CheckboxGroup> {
     List<Widget> children = [];
 
     if (widget.isRequired) {
-      children.add(const Text(
-        '(Required)',
-        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-      ));
+      children.add(
+        const Text(
+          '(Required)',
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        ),
+      );
       children.add(const SizedBox(height: 4.0));
     }
 
-    children.addAll(widget.options.map((option) {
-      bool isChecked = _selectedValues.contains(option['value']!);
-      return GestureDetector(
-        onTap: () {
-          _onChanged(option['value']!, !isChecked, option['hiddenContentId']);
-        },
-        child: Row(
-          // Align the checkbox and text vertically at the top.
+    children.addAll(
+      widget.options.map((option) {
+        bool isChecked = _selectedValues.contains(option['value']!);
+        return GestureDetector(
+          onTap: () {
+            _onChanged(option['value']!, !isChecked, option['hiddenContentId']);
+          },
+          child: Row(
+            // Align the checkbox and text vertically at the top.
 
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Checkbox(
-              value: isChecked,
-              onChanged: (bool? newValue) {
-                _onChanged(
-                    option['value']!, newValue, option['hiddenContentId']);
-              },
-            ),
-            Expanded(
-              child: Padding(
-                // Add a small padding above the text to align with checkbox.
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Checkbox(
+                value: isChecked,
+                onChanged: (bool? newValue) {
+                  _onChanged(
+                    option['value']!,
+                    newValue,
+                    option['hiddenContentId'],
+                  );
+                },
+              ),
+              Expanded(
+                child: Padding(
+                  // Add a small padding above the text to align with checkbox.
 
-                padding: const EdgeInsets.only(top: 6.0),
-                child: Text(
-                  option['label']!,
+                  padding: const EdgeInsets.only(top: 6.0),
+                  child: Text(
+                    option['label']!,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    }).toList());
+            ],
+          ),
+        );
+      }).toList(),
+    );
 
     return Center(
       child: FractionallySizedBox(

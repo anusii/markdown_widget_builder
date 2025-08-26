@@ -147,22 +147,26 @@ class CommandParser {
     // Regular expressions to identify various custom blocks and commands.
 
     final RegExp descriptionBlockExp = RegExp(
-        r'%% Description-Begin([\s\S]*?)%% Description-End',
-        caseSensitive: false);
+      r'%% Description-Begin([\s\S]*?)%% Description-End',
+      caseSensitive: false,
+    );
 
     final RegExp headingAlignBlockExp = RegExp(
-        r'%% H([1-6])(Left|Right|Center|Justify)?'
-        r'-Begin([\s\S]*?)%% H\1(?:\2)?-End',
-        caseSensitive: false);
+      r'%% H([1-6])(Left|Right|Center|Justify)?'
+      r'-Begin([\s\S]*?)%% H\1(?:\2)?-End',
+      caseSensitive: false,
+    );
 
     final RegExp alignBlockExp = RegExp(
-        r'%% Align(Left|Right|Center|Justify)-Begin([\s\S]*?)%% Align\1-End',
-        caseSensitive: false);
+      r'%% Align(Left|Right|Center|Justify)-Begin([\s\S]*?)%% Align\1-End',
+      caseSensitive: false,
+    );
 
     final RegExp imageExp = RegExp(
-        r'%% Image'
-        r'\(\s*([^,\)]+)\s*(?:,\s*([\d\.]+)\s*)?(?:,\s*([\d\.]+)\s*)?\)',
-        caseSensitive: false);
+      r'%% Image'
+      r'\(\s*([^,\)]+)\s*(?:,\s*([\d\.]+)\s*)?(?:,\s*([\d\.]+)\s*)?\)',
+      caseSensitive: false,
+    );
 
     final RegExp videoExp =
         RegExp(r'%% Video\(([^)]+)\)', caseSensitive: false);
@@ -174,8 +178,9 @@ class CommandParser {
         RegExp(r'%% Menu-Begin([\s\S]*?)%% Menu-End', caseSensitive: false);
 
     final RegExp buttonBlockExp = RegExp(
-        r'%% Button-Begin\((.*?)\)([\s\S]*?)%% Button-End',
-        caseSensitive: false);
+      r'%% Button-Begin\((.*?)\)([\s\S]*?)%% Button-End',
+      caseSensitive: false,
+    );
 
     final RegExp hiddenBlockExp = RegExp(
       r'%% Hidden-Begin\(([^)]+)\)([\s\S]*?)%% Hidden-End',
@@ -280,7 +285,7 @@ class CommandParser {
       String placeholder = '%%AlignPlaceholder$alignIndex%%';
       alignPlaceholders[placeholder] = {
         'align': match.group(1)!,
-        'content': match.group(2)!
+        'content': match.group(2)!,
       };
       alignIndex++;
       return placeholder;
@@ -289,20 +294,21 @@ class CommandParser {
     // Regex for identifying all custom commands and placeholders.
 
     final RegExp customCommandExp = RegExp(
-        r'(%% Slider\([^\)]+\)|%% Submit|'
-        r'%% (Radio|Checkbox)\((?:[^\\()]|\\.)+\)|'
-        r'%% InputSL\([^\)]+\)|%% InputML\([^\)]+\)|'
-        r'%% Calendar\([^\)]+\)|%% Dropdown\([^\)]+\)|'
-        r'%% Image\([^\)]+\)|%% Video\([^\)]+\)|%% Audio\([^\)]+\)|'
-        r'%% Timer\([^\)]+\)|%% Button\([^\)]+\)|%% EmptyLine|'
-        r'%%DescriptionPlaceholder\d+%%|'
-        r'%%HeadingPlaceholder\d+%%|'
-        r'%%AlignPlaceholder\d+%%|'
-        r'%%MenuPlaceholder\d+%%|'
-        r'%%ButtonPlaceholder\d+%%|'
-        r'%%HiddenPlaceholder\([^\)]+\)%%|'
-        r'%% PageBreak)',
-        caseSensitive: false);
+      r'(%% Slider\([^\)]+\)|%% Submit|'
+      r'%% (Radio|Checkbox)\((?:[^\\()]|\\.)+\)|'
+      r'%% InputSL\([^\)]+\)|%% InputML\([^\)]+\)|'
+      r'%% Calendar\([^\)]+\)|%% Dropdown\([^\)]+\)|'
+      r'%% Image\([^\)]+\)|%% Video\([^\)]+\)|%% Audio\([^\)]+\)|'
+      r'%% Timer\([^\)]+\)|%% Button\([^\)]+\)|%% EmptyLine|'
+      r'%%DescriptionPlaceholder\d+%%|'
+      r'%%HeadingPlaceholder\d+%%|'
+      r'%%AlignPlaceholder\d+%%|'
+      r'%%MenuPlaceholder\d+%%|'
+      r'%%ButtonPlaceholder\d+%%|'
+      r'%%HiddenPlaceholder\([^\)]+\)%%|'
+      r'%% PageBreak)',
+      caseSensitive: false,
+    );
 
     final matches = customCommandExp.allMatches(modifiedContent).toList();
     int lastIndex = 0;
@@ -318,9 +324,13 @@ class CommandParser {
     void flushCurrentRadioGroup() {
       if (currentRadioGroupName != null) {
         bool isRequired = _isWidgetRequired('Radio', currentRadioGroupName!);
-        currentPageWidgets.add(helpers.buildRadioGroup(
-            currentRadioGroupName!, currentRadioOptions,
-            isRequired: isRequired));
+        currentPageWidgets.add(
+          helpers.buildRadioGroup(
+            currentRadioGroupName!,
+            currentRadioOptions,
+            isRequired: isRequired,
+          ),
+        );
         currentRadioGroupName = null;
         currentRadioOptions = [];
       }
@@ -332,9 +342,13 @@ class CommandParser {
       if (currentCheckboxGroupName != null) {
         bool isRequired =
             _isWidgetRequired('Checkbox', currentCheckboxGroupName!);
-        currentPageWidgets.add(helpers.buildCheckboxGroup(
-            currentCheckboxGroupName!, currentCheckboxOptions,
-            isRequired: isRequired));
+        currentPageWidgets.add(
+          helpers.buildCheckboxGroup(
+            currentCheckboxGroupName!,
+            currentCheckboxOptions,
+            isRequired: isRequired,
+          ),
+        );
         currentCheckboxGroupName = null;
         currentCheckboxOptions = [];
       }
@@ -386,13 +400,18 @@ class CommandParser {
           ),
         );
       } else if (command.startsWith(
-          RegExp(r'%%DescriptionPlaceholder', caseSensitive: false))) {
+        RegExp(r'%%DescriptionPlaceholder', caseSensitive: false),
+      )) {
         // Handle description placeholders.
 
         String descriptionContent = descriptionPlaceholders[command]!;
         bool isRequired = false;
-        currentPageWidgets.add(helpers.buildDescriptionBox(descriptionContent,
-            isRequired: isRequired));
+        currentPageWidgets.add(
+          helpers.buildDescriptionBox(
+            descriptionContent,
+            isRequired: isRequired,
+          ),
+        );
       } else if (command
           .startsWith(RegExp(r'%%HeadingPlaceholder', caseSensitive: false))) {
         // Handle heading placeholders.
@@ -402,9 +421,14 @@ class CommandParser {
         final align = headingInfo['align']!;
         final headingContent = headingInfo['content']!;
         bool isRequired = false;
-        currentPageWidgets.add(helpers.buildHeading(
-            level, headingContent, align,
-            isRequired: isRequired));
+        currentPageWidgets.add(
+          helpers.buildHeading(
+            level,
+            headingContent,
+            align,
+            isRequired: isRequired,
+          ),
+        );
       } else if (command
           .startsWith(RegExp(r'%%AlignPlaceholder', caseSensitive: false))) {
         // Handle alignment placeholders.
@@ -413,8 +437,13 @@ class CommandParser {
         final align = alignInfo['align']!;
         final alignContent = alignInfo['content']!;
         bool isRequired = false;
-        currentPageWidgets.add(helpers.buildAlignedText(align, alignContent,
-            isRequired: isRequired));
+        currentPageWidgets.add(
+          helpers.buildAlignedText(
+            align,
+            alignContent,
+            isRequired: isRequired,
+          ),
+        );
       } else if (command
           .startsWith(RegExp(r'%% Image', caseSensitive: false))) {
         // Handle images.
@@ -432,7 +461,8 @@ class CommandParser {
             height = double.tryParse(imageMatch.group(3)!.trim());
           }
           currentPageWidgets.add(
-              helpers.buildImageWidget(filename, width: width, height: height));
+            helpers.buildImageWidget(filename, width: width, height: height),
+          );
         }
       } else if (command
           .startsWith(RegExp(r'%% Video', caseSensitive: false))) {
@@ -464,7 +494,8 @@ class CommandParser {
           final timeString = timerMatch.group(1)!.trim();
           bool isRequired = false;
           currentPageWidgets.add(
-              helpers.buildTimerWidget(timeString, isRequired: isRequired));
+            helpers.buildTimerWidget(timeString, isRequired: isRequired),
+          );
         }
       } else if (command
           .startsWith(RegExp(r'%% EmptyLine', caseSensitive: false))) {
@@ -479,9 +510,10 @@ class CommandParser {
         // Handle slider.
 
         final sliderExp = RegExp(
-            r'%% Slider\(([^,]+),\s*([\d\.]+),'
-            r'\s*([\d\.]+),\s*([\d\.]+),\s*([\d\.]+)\)',
-            caseSensitive: false);
+          r'%% Slider\(([^,]+),\s*([\d\.]+),'
+          r'\s*([\d\.]+),\s*([\d\.]+),\s*([\d\.]+)\)',
+          caseSensitive: false,
+        );
         final sliderMatch = sliderExp.firstMatch(command);
         if (sliderMatch != null) {
           final name = sliderMatch.group(1)!.trim();
@@ -533,8 +565,10 @@ class CommandParser {
         // Filter out widgets not in the allowed required types.
 
         requiredWidgets = requiredWidgets
-            .where((name) =>
-                allowedRequiredTypes.contains(getWidgetTypeByName(name)))
+            .where(
+              (name) =>
+                  allowedRequiredTypes.contains(getWidgetTypeByName(name)),
+            )
             .toList();
         currentPageWidgets.add(
           ButtonWidget(
@@ -776,7 +810,8 @@ class CommandParser {
           bool isRequired = _isWidgetRequired('Dropdown', name);
           _widgetTypeByName[name] = 'Dropdown';
           currentPageWidgets.add(
-              helpers.buildDropdown(name, options, isRequired: isRequired));
+            helpers.buildDropdown(name, options, isRequired: isRequired),
+          );
           lastIndex = optionsEndIndex;
           continue;
         }
@@ -796,8 +831,13 @@ class CommandParser {
           }
           bool isRequired = _isWidgetRequired('InputSL', name);
           _widgetTypeByName[name] = 'InputSL';
-          currentPageWidgets.add(helpers.buildInputField(name,
-              isMultiLine: false, isRequired: isRequired));
+          currentPageWidgets.add(
+            helpers.buildInputField(
+              name,
+              isMultiLine: false,
+              isRequired: isRequired,
+            ),
+          );
         }
       } else if (command
           .startsWith(RegExp(r'%% InputML', caseSensitive: false))) {
@@ -815,8 +855,13 @@ class CommandParser {
           }
           bool isRequired = _isWidgetRequired('InputML', name);
           _widgetTypeByName[name] = 'InputML';
-          currentPageWidgets.add(helpers.buildInputField(name,
-              isMultiLine: true, isRequired: isRequired));
+          currentPageWidgets.add(
+            helpers.buildInputField(
+              name,
+              isMultiLine: true,
+              isRequired: isRequired,
+            ),
+          );
         }
       } else if (pageBreakExp.hasMatch(command)) {
         // Handle page breaks.

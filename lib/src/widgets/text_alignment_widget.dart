@@ -39,8 +39,11 @@ class TextAlignmentWidget extends StatelessWidget {
   final String align;
   final String content;
 
-  const TextAlignmentWidget(
-      {super.key, required this.align, required this.content});
+  const TextAlignmentWidget({
+    super.key,
+    required this.align,
+    required this.content,
+  });
 
   @override
   Widget build(BuildContext context) {

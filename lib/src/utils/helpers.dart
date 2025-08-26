@@ -84,8 +84,12 @@ class Helpers {
   /// Builds a heading widget with the specified [level] and [align], optionally
   /// required.
 
-  Widget buildHeading(int level, String content, String align,
-      {bool isRequired = false}) {
+  Widget buildHeading(
+    int level,
+    String content,
+    String align, {
+    bool isRequired = false,
+  }) {
     Widget heading =
         TextHeadingWidget(level: level, content: content, align: align);
     if (isRequired) {
@@ -97,8 +101,11 @@ class Helpers {
 
   /// Builds a text widget with specified alignment, optionally required.
 
-  Widget buildAlignedText(String align, String content,
-      {bool isRequired = false}) {
+  Widget buildAlignedText(
+    String align,
+    String content, {
+    bool isRequired = false,
+  }) {
     Widget alignedText = TextAlignmentWidget(align: align, content: content);
     if (isRequired) {
       return _wrapWithRequiredLabel(alignedText);
@@ -110,8 +117,12 @@ class Helpers {
   /// Builds an image widget with optional dimensions and optional required
   /// label.
 
-  Widget buildImageWidget(String filename,
-      {double? width, double? height, bool isRequired = false}) {
+  Widget buildImageWidget(
+    String filename, {
+    double? width,
+    double? height,
+    bool isRequired = false,
+  }) {
     Widget image = ImageWidget(
       filename: filename,
       width: width,
@@ -271,8 +282,11 @@ class Helpers {
 
   /// Builds an input field (single or multi-line) and updates state on changes.
 
-  Widget buildInputField(String name,
-      {bool isMultiLine = false, bool isRequired = false}) {
+  Widget buildInputField(
+    String name, {
+    bool isMultiLine = false,
+    bool isRequired = false,
+  }) {
     // Initialise a global key for the input field if not present.
 
     if (!state.containsKey('_inputFieldKeys')) {
@@ -323,8 +337,11 @@ class Helpers {
   /// Builds a dropdown widget with given [options]. Updates state on selection
   /// changes.
 
-  Widget buildDropdown(String name, List<String> options,
-      {bool isRequired = false}) {
+  Widget buildDropdown(
+    String name,
+    List<String> options, {
+    bool isRequired = false,
+  }) {
     Widget dropdownWidget = DropdownWidget(
       name: name,
       options: options,

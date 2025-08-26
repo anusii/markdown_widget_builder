@@ -98,9 +98,11 @@ List<TextSpan> justifyText(String text, TextStyle style, double maxWidth) {
     for (int i = 0; i < units.length; i++) {
       spanChildren.add(TextSpan(text: units[i], style: blackTextStyle));
       if (i < units.length - 1) {
-        spanChildren.add(WidgetSpan(
-          child: SizedBox(width: additionalSpacePerGap),
-        ));
+        spanChildren.add(
+          WidgetSpan(
+            child: SizedBox(width: additionalSpacePerGap),
+          ),
+        );
       }
     }
 

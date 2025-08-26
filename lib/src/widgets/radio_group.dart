@@ -76,49 +76,53 @@ class RadioGroupField extends StatelessWidget {
     List<Widget> children = [];
 
     if (isRequired) {
-      children.add(const Text(
-        '(Required)',
-        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-      ));
+      children.add(
+        const Text(
+          '(Required)',
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        ),
+      );
       children.add(const SizedBox(height: 4.0));
     }
 
-    children.addAll(options.map((option) {
-      final String value = option['value'] ?? '';
+    children.addAll(
+      options.map((option) {
+        final String value = option['value'] ?? '';
 
-      return InkWell(
-        onTap: () {
-          final registry = fw.RadioGroup.maybeOf<String>(context);
-          if (registry != null) {
-            registry.onChanged(value);
-          } else {
-            // Fallback.
+        return InkWell(
+          onTap: () {
+            final registry = fw.RadioGroup.maybeOf<String>(context);
+            if (registry != null) {
+              registry.onChanged(value);
+            } else {
+              // Fallback.
 
-            onChanged(value, hiddenByValue[value]);
-          }
-        },
-        child: Row(
-          // Align the radio button and text vertically at the top.
+              onChanged(value, hiddenByValue[value]);
+            }
+          },
+          child: Row(
+            // Align the radio button and text vertically at the top.
 
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Radio<String>(
-              value: option['value']!,
-            ),
-            Expanded(
-              child: Padding(
-                // Add a small padding above the text.
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Radio<String>(
+                value: option['value']!,
+              ),
+              Expanded(
+                child: Padding(
+                  // Add a small padding above the text.
 
-                padding: const EdgeInsets.only(top: 6.0),
-                child: Text(
-                  option['label']!,
+                  padding: const EdgeInsets.only(top: 6.0),
+                  child: Text(
+                    option['label']!,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    }).toList());
+            ],
+          ),
+        );
+      }).toList(),
+    );
 
     return fw.RadioGroup<String>(
       groupValue: selectedValue,

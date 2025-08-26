@@ -330,7 +330,9 @@ class _ButtonWidgetState extends State<ButtonWidget> {
   }
 
   Future<void> _downloadDataForWeb(
-      Map<String, dynamic> data, String defaultFileName) async {
+    Map<String, dynamic> data,
+    String defaultFileName,
+  ) async {
     final jsonContent = encoder.convert(data);
     final messenger = ScaffoldMessenger.of(context);
 
@@ -393,9 +395,11 @@ class _ButtonWidgetState extends State<ButtonWidget> {
   }
 
   Future<void> _saveDataForNonWeb(
-      Map<String, dynamic> data, String defaultFileName) async {
+    Map<String, dynamic> data,
+    String defaultFileName,
+  ) async {
     final messenger = ScaffoldMessenger.of(context);
-    
+
     String? selectedFile = await FilePicker.platform.saveFile(
       dialogTitle: 'Please choose a filename and path to save the result',
       fileName: defaultFileName,
@@ -458,8 +462,9 @@ class _ButtonWidgetState extends State<ButtonWidget> {
       debugPrint('Stack trace: $stackTrace');
       messenger.showSnackBar(
         SnackBar(
-            content: Text('Submission failed: $e. '
-                'Did you set up the online submission correctly?')),
+          content: Text('Submission failed: $e. '
+              'Did you set up the online submission correctly?'),
+        ),
       );
     }
   }
