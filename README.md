@@ -64,10 +64,10 @@ For example, the following snippet from the markdown file:
 
 `%% Button-Begin(label,type,path)` and `%% Button-End` will be recognised as a
 button. The parameter `label` is the text displayed on the button, `type` is
-the type of the button (0 - Save to JSON file (default), 1 - Submit to URL, 2 - Run the custom function set by user),
-and `path` is the path to redirect to or save to when the button is clicked. The
-default file name is `result.json`. The button will be displayed on the
-`Survey Details` page.
+the type of the button (0 - Save to JSON file (default), 1 - Submit to URL,
+2 - Run the custom function set by user), and `path` is the path to redirect
+to or save to when the button is clicked. The default file name is
+`result.json`. The button will be displayed on the `Survey Details` page.
 
 Between the `Button-Begin` and `Button-End` tags is a list of widget IDs
 containing all required fields. When the button is clicked, the widget will
