@@ -1,8 +1,8 @@
 /// DESCRIPTION
 ///
-// Time-stamp: <Thursday 2024-11-14 21:33:15 +1100 Graham Williams>
+// Time-stamp: <Wednesday 2025-09-17 09:19:35 +1000 Graham Williams>
 ///
-/// Copyright (C) 2024, Software Innovation Institute, ANU.
+/// Copyright (C) 2025, Software Innovation Institute ANU
 ///
 /// Licensed under the MIT License (the "License").
 ///
@@ -27,5 +27,8 @@
 // SOFTWARE.
 ///
 /// Authors: AUTHORS
+
+// Add the library directive as we have doc entries above. We publish the above
+// meta doc lines in the docs.
 
 library;
