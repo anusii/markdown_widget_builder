@@ -314,7 +314,7 @@ class _ButtonWidgetState extends State<ButtonWidget> {
     }
   }
 
-  JsonEncoder encoder = JsonEncoder.withIndent('  ');
+  JsonEncoder encoder = const JsonEncoder.withIndent('  ');
 
   Future<void> _saveDataLocally(Map<String, dynamic> data) async {
     debugPrint('Collected Data:');
@@ -348,10 +348,10 @@ class _ButtonWidgetState extends State<ButtonWidget> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Save As'),
+          title: const Text('Save As'),
           content: TextField(
             controller: _filenameController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Enter filename',
             ),
           ),
@@ -360,13 +360,13 @@ class _ButtonWidgetState extends State<ButtonWidget> {
               onPressed: () {
                 Navigator.of(context).pop(null);
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop(_filenameController.text);
               },
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         );
@@ -395,7 +395,7 @@ class _ButtonWidgetState extends State<ButtonWidget> {
       );
     } else {
       messenger.showSnackBar(
-        SnackBar(content: Text('Save cancelled.')),
+        const SnackBar(content: Text('Save cancelled.')),
       );
     }
   }
