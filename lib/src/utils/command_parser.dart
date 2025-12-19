@@ -48,6 +48,7 @@ class CommandParser {
   final String content;
   final String fullContent;
   final void Function(String title, String content)? onMenuItemSelected;
+  final Function? onSubmit;
   final Map<String, dynamic> state;
   final VoidCallback setStateCallback;
   final String surveyTitle;
@@ -91,6 +92,7 @@ class CommandParser {
   /// - [fullContent]: The full original content, used when menu blocks
   ///   reference the whole.
   /// - [onMenuItemSelected]: A callback when a menu item is selected.
+  /// - [onSubmit]: A custom function to be called when save button is pressed.
   /// - [state]: A shared state map holding data for all widgets.
   /// - [setStateCallback]: A callback to update the state.
   /// - [surveyTitle]: Title of the survey or form.
@@ -102,6 +104,7 @@ class CommandParser {
     required this.content,
     required this.fullContent,
     this.onMenuItemSelected,
+    this.onSubmit,
     required this.state,
     required this.setStateCallback,
     required this.surveyTitle,
@@ -548,6 +551,7 @@ class CommandParser {
             requiredWidgets: [],
             state: state,
             surveyTitle: surveyTitle,
+            onSubmit: onSubmit,
           ),
         );
       } else if (command
@@ -576,6 +580,7 @@ class CommandParser {
             requiredWidgets: requiredWidgets,
             state: state,
             surveyTitle: surveyTitle,
+            onSubmit: onSubmit,
           ),
         );
       } else if (command
@@ -600,6 +605,7 @@ class CommandParser {
             content: hiddenContent,
             fullContent: fullContent,
             onMenuItemSelected: onMenuItemSelected,
+            onSubmit: onSubmit,
             state: state,
             setStateCallback: setStateCallback,
             surveyTitle: surveyTitle,

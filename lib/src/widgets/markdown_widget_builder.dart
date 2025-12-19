@@ -70,12 +70,23 @@ class MarkdownWidgetBuilder extends StatefulWidget {
 
   final void Function(String title, String content)? onMenuItemSelected;
 
+  /// A custom function to be called when submit/save button is pressed
+  /// Note that the package assumes this function has one input argument
+  /// to pass the response Map. An example function is below
+  /// ignore: unintended_html_in_doc_comment
+  ///   void onSubmit (Map<String, dynamic> responseMap) {
+  ///     print (responseMap.toString());
+  ///   }
+
+  final Function? onSubmit;
+
   const MarkdownWidgetBuilder({
     super.key,
     required this.content,
     required this.title,
     this.submitUrl,
     this.onMenuItemSelected,
+    this.onSubmit,
   });
 
   @override
@@ -141,6 +152,7 @@ class _MarkdownWidgetBuilderState extends State<MarkdownWidgetBuilder> {
       content: widget.content,
       fullContent: widget.content,
       onMenuItemSelected: widget.onMenuItemSelected,
+      onSubmit: widget.onSubmit,
       state: {
         '_inputValues': _inputValues,
         '_sliderValues': _sliderValues,

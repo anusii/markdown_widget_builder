@@ -47,6 +47,7 @@ class ButtonWidget extends StatefulWidget {
   final List<String> requiredWidgets;
   final Map<String, dynamic> state;
   final String surveyTitle;
+  final Function? onSubmit;
 
   const ButtonWidget({
     super.key,
@@ -54,6 +55,7 @@ class ButtonWidget extends StatefulWidget {
     required this.requiredWidgets,
     required this.state,
     required this.surveyTitle,
+    this.onSubmit,
   });
 
   @override
@@ -301,6 +303,10 @@ class _ButtonWidgetState extends State<ButtonWidget> {
       // Submit the data to a URL.
 
       await _submitDataToUrl(data);
+    } else if (actionType == 2) {
+      // Call the custom onSubmit function
+
+      widget.onSubmit!(data);
     } else {
       // Invalid action type.
 
