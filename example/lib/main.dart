@@ -31,11 +31,14 @@
 library;
 
 import 'dart:async';
-import 'dart:io';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import 'package:markdown_widget_builder/markdown_widget_builder.dart';
+import 'package:markdown_widget_builder/src/utils/platform_io.dart'
+    if (dart.library.html) 'package:markdown_widget_builder/src/utils/platform_web.dart'
+    as platform_utils;
 
 void main() {
   runApp(const MyApp());
@@ -65,7 +68,7 @@ class _MarkdownExamplePageState extends State<MarkdownExamplePage> {
   bool _isLoadingConfig = true;
   Object? _configLoadError;
 
-  StreamSubscription<FileSystemEvent>? _fileWatchSub;
+  StreamSubscription<dynamic>? _fileWatchSub;
   String _markdownContent = 'Loading...';
 
   @override
@@ -103,18 +106,20 @@ class _MarkdownExamplePageState extends State<MarkdownExamplePage> {
       );
       setState(() => _markdownContent = content);
 
-      // Watch file changes (if local path is valid).
+      // Watch file changes (if local path is valid and not on web).
 
-      final interpretedPath = await interpretPath(config.markdown.path);
-      final file = File(interpretedPath);
-      if (await file.exists()) {
-        _fileWatchSub?.cancel();
-        _fileWatchSub = watchFileChanges(
-          interpretedPath,
-          onFileContentChanged: (newContent) {
-            setState(() => _markdownContent = newContent);
-          },
-        );
+      if (!kIsWeb) {
+        final interpretedPath = await interpretPath(config.markdown.path);
+        final fileExists = await platform_utils.fileExists(interpretedPath);
+        if (fileExists) {
+          _fileWatchSub?.cancel();
+          _fileWatchSub = watchFileChanges(
+            interpretedPath,
+            onFileContentChanged: (newContent) {
+              setState(() => _markdownContent = newContent);
+            },
+          );
+        }
       }
     } catch (e) {
       setState(() => _configLoadError = e);

@@ -29,15 +29,20 @@
 /// Authors: Tony Chen
 library;
 
-import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
-import 'package:path_provider/path_provider.dart';
+
+// Conditionally import dart:io for non-web platforms.
+
+import 'package:markdown_widget_builder/src/utils/platform_io.dart'
+    if (dart.library.html) 'package:markdown_widget_builder/src/utils/platform_web.dart'
+    as platform_utils;
 
 import 'package:markdown_widget_builder/src/constants/pkg.dart'
     show contentWidthFactor, mediaPath;
@@ -71,30 +76,37 @@ class _VideoWidgetState extends State<VideoWidget> {
 
   Future<void> _initializeVideo() async {
     final rawLocalPath = '$mediaPath/${widget.filename}';
-    final localFile = File(rawLocalPath);
-    final isFileExists = await localFile.exists();
 
     final isAssetLike = rawLocalPath.startsWith('assets/') ||
         rawLocalPath.startsWith('assets\\');
 
     String mediaUri;
     try {
-      if (isFileExists && !isAssetLike) {
-        mediaUri = rawLocalPath.startsWith('file://')
-            ? Uri.parse(rawLocalPath).toFilePath()
-            : rawLocalPath;
+      if (kIsWeb) {
+        // On web, load directly from assets as a URL.
+        // media_kit on web uses HTML5 video which can load asset URLs.
+
+        mediaUri = rawLocalPath;
       } else {
-        final ByteData data = await rootBundle.load(rawLocalPath);
-        final Uint8List bytes = data.buffer.asUint8List();
+        // On non-web platforms, check if file exists locally.
 
-        final tempDirPath = (await getTemporaryDirectory()).path;
-        final fileNameOnly = widget.filename.split('/').last;
-        final tempPath = '$tempDirPath/$fileNameOnly';
+        final isFileExists = await platform_utils.fileExists(rawLocalPath);
 
-        final tempFile = File(tempPath);
-        await tempFile.writeAsBytes(bytes);
+        if (isFileExists && !isAssetLike) {
+          mediaUri = rawLocalPath.startsWith('file://')
+              ? Uri.parse(rawLocalPath).toFilePath()
+              : rawLocalPath;
+        } else {
+          final ByteData data = await rootBundle.load(rawLocalPath);
+          final Uint8List bytes = data.buffer.asUint8List();
 
-        mediaUri = Uri.file(tempFile.path).toString();
+          final tempPath = await platform_utils.writeBytesToTempFile(
+            widget.filename,
+            bytes,
+          );
+
+          mediaUri = Uri.file(tempPath).toString();
+        }
       }
     } catch (e) {
       _failedToLoad = true;
