@@ -36,14 +36,11 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-// Conditionally import dart:io for non-web platforms.
-
+import 'package:markdown_widget_builder/src/constants/pkg.dart'
+    show contentWidthFactor, mediaPath;
 import 'package:markdown_widget_builder/src/utils/platform_io.dart'
     if (dart.library.html) 'package:markdown_widget_builder/src/utils/platform_web.dart'
     as platform_utils;
-
-import 'package:markdown_widget_builder/src/constants/pkg.dart'
-    show contentWidthFactor, mediaPath;
 
 class ImageWidget extends StatefulWidget {
   final String filename;
@@ -63,10 +60,8 @@ class ImageWidget extends StatefulWidget {
 
 class ImageWidgetState extends State<ImageWidget> {
   String? _localPath;
-  String? _assetPath;
   Uint8List? _imageBytes;
   bool _failedToLoad = false;
-  bool _useAsset = false;
 
   @override
   void initState() {
@@ -86,8 +81,6 @@ class ImageWidgetState extends State<ImageWidget> {
       try {
         final data = await rootBundle.load(rawLocalPath);
         _imageBytes = data.buffer.asUint8List();
-        _assetPath = rawLocalPath;
-        _useAsset = true;
       } catch (e) {
         _failedToLoad = true;
       }

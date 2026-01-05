@@ -38,16 +38,13 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:path/path.dart' as p;
 
-// Conditionally import dart:io for non-web platforms.
-
-import 'package:markdown_widget_builder/src/utils/platform_io.dart'
-    if (dart.library.html) 'package:markdown_widget_builder/src/utils/platform_web.dart'
-    as platform_utils;
-
 import 'package:markdown_widget_builder/markdown_widget_builder.dart'
     show setMarkdownMediaPath;
 import 'package:markdown_widget_builder/src/constants/pkg.dart'
     show defaultConfigFile, mdPath, mediaPath;
+import 'package:markdown_widget_builder/src/utils/platform_io.dart'
+    if (dart.library.html) 'package:markdown_widget_builder/src/utils/platform_web.dart'
+    as platform_utils;
 
 /// Structure of md_config.json.
 

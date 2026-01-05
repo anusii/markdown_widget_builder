@@ -54,14 +54,6 @@ Future<String> writeBytesToTempFile(String filename, Uint8List bytes) async {
   return tempFile.path;
 }
 
-/// Gets the temporary directory path.
-/// Throws on web platform.
-
-Future<String> getTemporaryDirectoryPath() async {
-  final tempDir = await getTemporaryDirectory();
-  return tempDir.path;
-}
-
 /// Returns the operating system name.
 /// Returns 'web' on web platform.
 

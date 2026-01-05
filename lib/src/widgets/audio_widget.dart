@@ -38,14 +38,11 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:audioplayers/audioplayers.dart';
 
-// Conditionally import dart:io for non-web platforms.
-
+import 'package:markdown_widget_builder/src/constants/pkg.dart'
+    show contentWidthFactor, mediaPath;
 import 'package:markdown_widget_builder/src/utils/platform_io.dart'
     if (dart.library.html) 'package:markdown_widget_builder/src/utils/platform_web.dart'
     as platform_utils;
-
-import 'package:markdown_widget_builder/src/constants/pkg.dart'
-    show contentWidthFactor, mediaPath;
 
 class AudioWidget extends StatefulWidget {
   final String filename;

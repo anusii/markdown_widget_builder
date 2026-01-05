@@ -44,13 +44,6 @@ Future<String> writeBytesToTempFile(String filename, Uint8List bytes) async {
   throw UnsupportedError('writeBytesToTempFile is not supported on web');
 }
 
-/// Gets the temporary directory path.
-/// Throws UnsupportedError on web platform.
-
-Future<String> getTemporaryDirectoryPath() async {
-  throw UnsupportedError('getTemporaryDirectoryPath is not supported on web');
-}
-
 /// Returns the operating system name.
 /// Returns 'web' on web platform.
 
