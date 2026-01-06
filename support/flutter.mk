@@ -384,6 +384,7 @@ qtest:
 		MINGW*|MSYS*|CYGWIN*) device_id="windows" ;; \
 		*) echo "Unsupported platform: $$(uname -s)"; exit 1 ;; \
 	esac; \
+	if [ ! -d integration_test ]; then echo "No integration tests available."; exit 0; fi; \
 	for t in $$(find integration_test -name "*_test.dart" | sort); do \
 		echo "========================================"; \
 		echo $$t; /bin/echo -n $$t >&2; \
