@@ -30,17 +30,19 @@
 library;
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:audioplayers/audioplayers.dart';
-import 'package:path_provider/path_provider.dart';
 
 import 'package:markdown_widget_builder/src/constants/pkg.dart'
     show contentWidthFactor, mediaPath;
+import 'package:markdown_widget_builder/src/utils/platform_io.dart'
+    if (dart.library.html) 'package:markdown_widget_builder/src/utils/platform_web.dart'
+    as platform_utils;
 
 class AudioWidget extends StatefulWidget {
   final String filename;
@@ -87,41 +89,57 @@ class _AudioWidgetState extends State<AudioWidget> {
 
   Future<void> _initAudioPlayer() async {
     final rawLocalPath = '$mediaPath/${widget.filename}';
-    final localFile = File(rawLocalPath);
-    final isFileExists = await localFile.exists();
 
     final isAssetLike = rawLocalPath.startsWith('assets/') ||
         rawLocalPath.startsWith('assets\\');
 
-    String sourcePath;
-    if (isFileExists && !isAssetLike) {
-      sourcePath = rawLocalPath.startsWith('file://')
-          ? Uri.parse(rawLocalPath).toFilePath()
-          : rawLocalPath;
-    } else {
-      try {
-        final ByteData data = await rootBundle.load(rawLocalPath);
-        final Uint8List bytes = data.buffer.asUint8List();
-
-        final tempDir = await getTemporaryDirectory();
-        final fileNameOnly = widget.filename.split('/').last;
-        final tempPath = '${tempDir.path}/$fileNameOnly';
-
-        final tempFile = File(tempPath);
-        await tempFile.writeAsBytes(bytes);
-
-        sourcePath = tempFile.path;
-      } catch (e) {
-        _failedToLoad = true;
-        setState(() {});
-        return;
-      }
-    }
-
-    _sourcePath = sourcePath;
+    Source audioSource;
 
     try {
-      await _player.setSource(DeviceFileSource(_sourcePath!));
+      if (kIsWeb) {
+        // On web, AssetSource expects a path relative to the assets/ directory,
+        // without the 'assets/' prefix.
+
+        String assetPath = rawLocalPath;
+        if (assetPath.startsWith('assets/')) {
+          assetPath = assetPath.substring(7); // Remove 'assets/' prefix.
+        } else if (assetPath.startsWith('assets\\')) {
+          assetPath = assetPath.substring(7); // Remove 'assets\\' prefix.
+        }
+        audioSource = AssetSource(assetPath);
+        _sourcePath = assetPath;
+      } else {
+        // On non-web platforms, check if file exists locally.
+
+        final isFileExists = await platform_utils.fileExists(rawLocalPath);
+
+        if (isFileExists && !isAssetLike) {
+          final sourcePath = rawLocalPath.startsWith('file://')
+              ? Uri.parse(rawLocalPath).toFilePath()
+              : rawLocalPath;
+          _sourcePath = sourcePath;
+          audioSource = DeviceFileSource(_sourcePath!);
+        } else {
+          final ByteData data = await rootBundle.load(rawLocalPath);
+          final Uint8List bytes = data.buffer.asUint8List();
+
+          final tempPath = await platform_utils.writeBytesToTempFile(
+            widget.filename,
+            bytes,
+          );
+
+          _sourcePath = tempPath;
+          audioSource = DeviceFileSource(_sourcePath!);
+        }
+      }
+    } catch (e) {
+      _failedToLoad = true;
+      setState(() {});
+      return;
+    }
+
+    try {
+      await _player.setSource(audioSource);
     } catch (e) {
       _failedToLoad = true;
       setState(() {});
@@ -193,7 +211,10 @@ class _AudioWidgetState extends State<AudioWidget> {
                         // play from the start.
 
                         if (_sourcePath != null) {
-                          await _player.play(DeviceFileSource(_sourcePath!));
+                          final source = kIsWeb
+                              ? AssetSource(_sourcePath!)
+                              : DeviceFileSource(_sourcePath!);
+                          await _player.play(source);
                         }
                       }
                     }

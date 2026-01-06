@@ -27,17 +27,20 @@
 // SOFTWARE.
 ///
 /// Authors: Tony Chen
+
 library;
 
-import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:path_provider/path_provider.dart';
-
 import 'package:markdown_widget_builder/src/constants/pkg.dart'
     show contentWidthFactor, mediaPath;
+import 'package:markdown_widget_builder/src/utils/platform_io.dart'
+    if (dart.library.html) 'package:markdown_widget_builder/src/utils/platform_web.dart'
+    as platform_utils;
 
 class ImageWidget extends StatefulWidget {
   final String filename;
@@ -57,6 +60,7 @@ class ImageWidget extends StatefulWidget {
 
 class ImageWidgetState extends State<ImageWidget> {
   String? _localPath;
+  Uint8List? _imageBytes;
   bool _failedToLoad = false;
 
   @override
@@ -67,27 +71,40 @@ class ImageWidgetState extends State<ImageWidget> {
 
   Future<void> _initializeImage() async {
     final rawLocalPath = '$mediaPath/${widget.filename}';
-    final file = File(rawLocalPath);
-    final isFileExists = await file.exists();
 
     final isAssetLike = rawLocalPath.startsWith('assets/') ||
         rawLocalPath.startsWith('assets\\');
 
-    if (isFileExists && !isAssetLike) {
-      _localPath = file.path;
-    } else {
+    if (kIsWeb) {
+      // On web, load image bytes from assets and use Image.memory.
+
       try {
         final data = await rootBundle.load(rawLocalPath);
-        final bytes = data.buffer.asUint8List();
-        final tempDir = await getTemporaryDirectory();
-        final fileNameOnly = widget.filename.split('/').last;
-        final tempPath = '${tempDir.path}/$fileNameOnly';
-
-        final tempFile = File(tempPath);
-        await tempFile.writeAsBytes(bytes);
-        _localPath = tempFile.path;
+        _imageBytes = data.buffer.asUint8List();
       } catch (e) {
         _failedToLoad = true;
+      }
+    } else {
+      // On non-web platforms, check if file exists locally.
+
+      final isFileExists = await platform_utils.fileExists(rawLocalPath);
+
+      if (isFileExists && !isAssetLike) {
+        _localPath = rawLocalPath;
+      } else {
+        try {
+          final data = await rootBundle.load(rawLocalPath);
+          final bytes = data.buffer.asUint8List();
+
+          final tempPath = await platform_utils.writeBytesToTempFile(
+            widget.filename,
+            bytes,
+          );
+
+          _localPath = tempPath;
+        } catch (e) {
+          _failedToLoad = true;
+        }
       }
     }
 
@@ -99,14 +116,37 @@ class ImageWidgetState extends State<ImageWidget> {
     if (_failedToLoad) {
       return const Center(child: Text('Image not found'));
     }
+
+    if (kIsWeb) {
+      if (_imageBytes == null) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      return Center(
+        child: FractionallySizedBox(
+          widthFactor: contentWidthFactor,
+          child: Image.memory(
+            _imageBytes!,
+            width: widget.width,
+            height: widget.height,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) {
+              return const Text('Image not found');
+            },
+          ),
+        ),
+      );
+    }
+
+    // Non-web platforms.
+
     if (_localPath == null) {
       return const Center(child: CircularProgressIndicator());
     }
     return Center(
       child: FractionallySizedBox(
         widthFactor: contentWidthFactor,
-        child: Image.file(
-          File(_localPath!),
+        child: Image(
+          image: FileImage(platform_utils.createFile(_localPath!)),
           width: widget.width,
           height: widget.height,
           fit: BoxFit.contain,
