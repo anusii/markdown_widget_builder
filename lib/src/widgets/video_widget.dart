@@ -83,7 +83,7 @@ class _VideoWidgetState extends State<VideoWidget> {
         // On web, load directly from assets as a URL.
         // media_kit on web uses HTML5 video which can load asset URLs.
 
-        mediaUri = rawLocalPath;
+        mediaUri = 'assets/$rawLocalPath';
       } else {
         // On non-web platforms, check if file exists locally.
 
