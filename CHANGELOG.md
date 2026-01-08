@@ -9,7 +9,7 @@ utilised by the flutter version_widget package.
 
 ## 0.1 Stable beta release
 
-+ Video mp4 on Web. Reduce dart file lines of code. [0.0.9 20260106 tonypioneer]
++ Reduce lines of code per dart file [0.0.9 20260106 tonypioneer]
 + Add the ability to pass a custom onSubmit function [0.0.8 20251216 anushkavid]
 + Fix new flutter RadioGroup conflict [0.0.7 20250825 tonypioneer]
 + Lint cleanup [0.0.6 20250805 tonypioneer]
