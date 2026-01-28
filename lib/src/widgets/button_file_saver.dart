@@ -111,7 +111,7 @@ Future<void> saveDataForNonWeb(
 ) async {
   final messenger = ScaffoldMessenger.of(context);
 
-  String? selectedFile = await FilePicker.saveFile(
+  String? selectedFile = await FilePicker.platform.saveFile(
     dialogTitle: 'Please choose a filename and path to save the result',
     fileName: defaultFileName,
     type: FileType.custom,
