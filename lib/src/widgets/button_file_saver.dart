@@ -30,14 +30,14 @@ library;
 
 import 'dart:convert';
 import 'dart:io' show File;
-import 'dart:js_interop';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
 // import 'package:universal_html/html.dart' as html;
-import 'package:web/web.dart' as web;
+import 'package:universal_web/js_interop.dart';
+import 'package:universal_web/web.dart' as web;
 
 /// JSON encoder with indentation for pretty printing.
 
@@ -95,7 +95,7 @@ Future<void> downloadDataForWeb(
     // html.Url.revokeObjectUrl(url);
 
     final blob = web.Blob(
-      <web.BlobPart>[bytes.buffer.toJS].toJS,
+      [bytes.buffer.toJS].toJS,
       web.BlobPropertyBag(type: 'application/json'),
     );
     final url = web.URL.createObjectURL(blob);
