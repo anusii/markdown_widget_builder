@@ -9,6 +9,8 @@ utilised by the flutter version_widget package.
 
 ## 0.1 Stable beta release
 
++ Migrate to universal_web to allow native web build [0.0.10 20260217 dc]
++ Update the file picker [0.0.10 20260217 tonypioneer]
 + Reduce lines of code per dart file [0.0.9 20260106 tonypioneer]
 + Add the ability to pass a custom onSubmit function [0.0.8 20251216 anushkavid]
 + Fix new flutter RadioGroup conflict [0.0.7 20250825 tonypioneer]
