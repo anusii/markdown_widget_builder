@@ -35,7 +35,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:universal_html/html.dart' as html;
+// import 'package:universal_html/html.dart' as html;
+import 'package:universal_web/js_interop.dart';
+import 'package:universal_web/web.dart' as web;
 
 /// JSON encoder with indentation for pretty printing.
 
@@ -83,14 +85,30 @@ Future<void> downloadDataForWeb(
       filename = '$filename.json';
     }
     final bytes = utf8.encode(jsonContent);
-    final blob = html.Blob([bytes], 'application/json');
-    final url = html.Url.createObjectUrlFromBlob(blob);
+    // final blob = html.Blob([bytes], 'application/json');
+    // final url = html.Url.createObjectUrlFromBlob(blob);
 
-    html.AnchorElement(href: url)
-      ..setAttribute('download', filename)
-      ..click();
+    // html.AnchorElement(href: url)
+    //   ..setAttribute('download', filename)
+    //   ..click();
 
-    html.Url.revokeObjectUrl(url);
+    // html.Url.revokeObjectUrl(url);
+
+    final blob = web.Blob(
+      [bytes.buffer.toJS].toJS,
+      web.BlobPropertyBag(type: 'application/json'),
+    );
+    final url = web.URL.createObjectURL(blob);
+
+    final anchor = web.HTMLAnchorElement()
+      ..href = url
+      ..download = filename;
+
+    web.document.body?.append(anchor);
+    anchor.click();
+    anchor.remove();
+
+    web.URL.revokeObjectURL(url);
 
     messenger.showSnackBar(
       SnackBar(content: Text('Data downloaded as $filename')),
