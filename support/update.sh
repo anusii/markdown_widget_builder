@@ -7,6 +7,7 @@
 SCRIPTS=${HOME}/projects/scripts/flutter
 FILES=(
     ".gitignore" "${SCRIPTS}/gitignore"
+    ".pubignore" "${SCRIPTS}/pubignore"
     "support/flutter.mk"  "${SCRIPTS}/../support/flutter.mk"
     "support/loc.sh"  "${SCRIPTS}/../support/loc.sh"
     "support/update.sh"  "${SCRIPTS}/../support/update.sh"
