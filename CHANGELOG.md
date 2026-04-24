@@ -9,6 +9,7 @@ utilised by the flutter version_widget package.
 
 ## 0.1 Stable beta release
 
++ Update file_picker dependency [0.0.11 20260424 anushkavid]
 + Migrate to universal_web to allow native web build [0.0.10 20260217 dc]
 + Update the file picker [0.0.10 20260217 tonypioneer]
 + Reduce lines of code per dart file [0.0.9 20260106 tonypioneer]
