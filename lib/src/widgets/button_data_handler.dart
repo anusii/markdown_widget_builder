@@ -34,6 +34,7 @@ import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 
+import 'package:markdown_widget_builder/src/utils/command_patterns.dart';
 import 'package:markdown_widget_builder/src/widgets/button_file_saver.dart'
     as file_saver;
 
@@ -56,49 +57,138 @@ class ButtonDataCollector {
     final dateValues = state['_dateValues'] as Map<String, DateTime?>;
     final dropdownValues = state['_dropdownValues'] as Map<String, String?>;
 
+    // Compute the set of widget names that belong to hidden sections which
+    // are not currently visible. Such widgets are dropped from the response
+    // because the user never had a chance to interact with them.
+
+    final excluded = _collectHiddenWidgetNames();
+
     // Add slider values.
 
     sliderValues.forEach((key, value) {
+      if (excluded.contains(key)) return;
       responses[key] = value;
     });
 
-    // Add radio values.
+    // Add radio values, skipping unanswered ones.
 
     radioValues.forEach((key, value) {
+      if (excluded.contains(key)) return;
+      if (value == null) return;
       responses[key] = value;
     });
 
     // Add checkbox values (convert Set to List).
 
     checkboxValues.forEach((key, value) {
+      if (excluded.contains(key)) return;
       responses[key] = value.toList();
     });
 
-    // Add date values.
+    // Add date values, skipping unanswered ones.
 
     dateValues.forEach((key, value) {
-      if (value != null) {
-        responses[key] =
-            '${value.year}-${value.month.toString().padLeft(2, '0')}-'
-            '${value.day.toString().padLeft(2, '0')}';
-      } else {
-        responses[key] = null;
-      }
+      if (excluded.contains(key)) return;
+      if (value == null) return;
+      responses[key] =
+          '${value.year}-${value.month.toString().padLeft(2, '0')}-'
+          '${value.day.toString().padLeft(2, '0')}';
     });
 
-    // Add dropdown values.
+    // Add dropdown values, skipping unanswered ones.
 
     dropdownValues.forEach((key, value) {
+      if (excluded.contains(key)) return;
+      if (value == null) return;
       responses[key] = value;
     });
 
     // Add text input values.
 
     inputValues.forEach((key, value) {
+      if (excluded.contains(key)) return;
       responses[key] = value;
     });
 
     return responses;
+  }
+
+  /// Returns the set of widget names that should be omitted from the
+  /// response because they sit inside hidden sections that are not
+  /// currently visible.
+  ///
+  /// Hidden sections are identified by their id in the
+  /// `_hiddenContentMap`. The corresponding visibility flag in
+  /// `_hiddenContentVisibility` indicates whether the user has revealed
+  /// the section. Nested hidden sections are followed transitively, so a
+  /// widget inside a hidden section that is itself nested in another
+  /// invisible section is still excluded.
+
+  Set<String> _collectHiddenWidgetNames() {
+    final hiddenContentMap =
+        (state['_hiddenContentMap'] as Map<String, String>?) ?? const {};
+    final hiddenContentVisibility =
+        (state['_hiddenContentVisibility'] as Map<String, bool>?) ?? const {};
+
+    if (hiddenContentMap.isEmpty) return const <String>{};
+
+    final excluded = <String>{};
+
+    hiddenContentMap.forEach((id, content) {
+      final visible = hiddenContentVisibility[id] ?? false;
+      if (visible) return;
+      excluded.addAll(_extractWidgetNames(content, hiddenContentMap));
+    });
+
+    return excluded;
+  }
+
+  /// Extracts the names of every named widget defined in [content]. When
+  /// [content] references other hidden sections via
+  /// `%%HiddenPlaceholder(id)%%`, those sections are recursively expanded
+  /// using [hiddenContentMap] so that nested widgets are captured too.
+
+  Set<String> _extractWidgetNames(
+    String content,
+    Map<String, String> hiddenContentMap, {
+    Set<String>? visited,
+  }) {
+    final seen = visited ?? <String>{};
+    final names = <String>{};
+
+    // Capture widget names defined directly inside this content.
+
+    void addFirstGroup(RegExp pattern) {
+      for (final m in pattern.allMatches(content)) {
+        final name = m.group(1)?.trim();
+        if (name != null && name.isNotEmpty) names.add(name);
+      }
+    }
+
+    addFirstGroup(CommandPatterns.radio);
+    addFirstGroup(CommandPatterns.checkbox);
+    addFirstGroup(CommandPatterns.slider);
+    addFirstGroup(CommandPatterns.inputSL);
+    addFirstGroup(CommandPatterns.inputML);
+    addFirstGroup(CommandPatterns.calendar);
+    addFirstGroup(CommandPatterns.dropdown);
+
+    // Recurse into any nested hidden sections referenced by placeholder.
+
+    for (final m in CommandPatterns.hiddenPlaceholderExtract.allMatches(
+      content,
+    )) {
+      final id = m.group(1)?.trim();
+      if (id == null || id.isEmpty || seen.contains(id)) continue;
+      seen.add(id);
+      final nested = hiddenContentMap[id];
+      if (nested == null) continue;
+      names.addAll(
+        _extractWidgetNames(nested, hiddenContentMap, visited: seen),
+      );
+    }
+
+    return names;
   }
 }
 
