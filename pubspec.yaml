@@ -18,15 +18,15 @@ dependencies:
   flutter:
     sdk: flutter
 
-  audioplayers: ^6.5.1
-  file_picker: ^11.0.2
-  flutter_markdown_plus: ^1.0.7
+  audioplayers: ^6.8.1
+  file_picker: ^12.1.2
+  flutter_markdown_plus: ^1.0.12
   http: ^1.6.0
   media_kit: ^1.2.6
   media_kit_libs_video: ^1.0.7
   media_kit_video: ^2.0.1
   path: ^1.9.1
-  path_provider: ^2.1.5
+  path_provider: ^2.1.6
   # universal_html: ^2.3.0
   universal_web: ^1.1.1+1
   url_launcher: ^6.3.2
@@ -34,7 +34,7 @@ dependencies:
 dev_dependencies:
   custom_lint: ^0.8.1
   flutter_lints: ^6.0.0
-  import_order_lint: ^0.2.2
+  import_order_lint: ^0.2.3
 
 flutter:
   uses-material-design: true
