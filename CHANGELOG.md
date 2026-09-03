@@ -9,7 +9,7 @@ utilised by the flutter version_widget package.
 
 ## 0.1 Stable beta release
 
-+ Use file_picker v12.x API [0.0.13]
++ Use file_picker v12.x API [0.0.13 20260903 dc]
 + Remove null/empty values from output JSON [0.0.12 20260511 tonypioneer]
 + Update file_picker dependency [0.0.11 20260424 anushkavid]
 + Migrate to universal_web to allow native web build [0.0.10 20260217 dc]
