@@ -24,12 +24,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 ///
-/// Authors: Tony Chen
+/// Authors: Tony Chen, Dawei Chen
 
 library;
 
 import 'dart:convert';
-import 'dart:io' show File;
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -129,35 +128,35 @@ Future<void> saveDataForNonWeb(
 ) async {
   final messenger = ScaffoldMessenger.of(context);
 
-  String? selectedFile = await FilePicker.saveFile(
-    dialogTitle: 'Please choose a filename and path to save the result',
-    fileName: defaultFileName,
-    type: FileType.custom,
-    allowedExtensions: ['json'],
-  );
-
-  if (selectedFile != null) {
-    final file = File(selectedFile);
+  try {
     final jsonContent = jsonEncoder.convert(data);
 
-    try {
-      await file.writeAsString(jsonContent);
-      debugPrint('File saved at $selectedFile');
+    final selectedFileUri = await FilePicker.saveFile(
+      dialogTitle: 'Please choose a filename and path to save the result',
+      fileName: defaultFileName,
+      bytes: utf8.encode(jsonContent),
+      mimeType: 'application/json',
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    );
+
+    if (selectedFileUri != null) {
+      debugPrint('File saved at $selectedFileUri');
 
       messenger.showSnackBar(
-        SnackBar(content: Text('Data saved as $selectedFile')),
+        SnackBar(content: Text('Data saved as $selectedFileUri')),
       );
-    } catch (e) {
-      debugPrint('Error saving file: $e');
-
+    } else {
+      debugPrint('Save file dialog was cancelled.');
       messenger.showSnackBar(
-        SnackBar(content: Text('Error saving file: $e')),
+        const SnackBar(content: Text('Save cancelled.')),
       );
     }
-  } else {
-    debugPrint('Save file dialog was cancelled.');
+  } catch (e) {
+    debugPrint('Error saving file: $e');
+
     messenger.showSnackBar(
-      const SnackBar(content: Text('Save cancelled.')),
+      SnackBar(content: Text('Error saving file: $e')),
     );
   }
 }
